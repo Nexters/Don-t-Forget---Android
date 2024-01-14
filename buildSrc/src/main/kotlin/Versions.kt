@@ -28,7 +28,6 @@ object Versions {
     const val compose_bom = "2023.05.01"
     const val compose_navigation = "2.7.4"
     const val paging_runtime = "3.1.1"
-    const val toggle = "1.1.1"
     const val compose_lifecycle = "2.6.2"
     const val datastore = "1.0.0"
     const val kakao = "2.17.0"
