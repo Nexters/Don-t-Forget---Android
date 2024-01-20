@@ -16,7 +16,7 @@ object RetrofitModule {
 
     @Provides
     fun provideRetrofit(
-        loggingOkHttpClient: OkHttpClient
+        loggingOkHttpClient: OkHttpClient,
     ): Retrofit {
         val dontForgetRetrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

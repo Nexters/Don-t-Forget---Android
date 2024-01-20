@@ -19,7 +19,7 @@ object HttpClientModule {
         val builder = OkHttpClient.Builder()
 
         builder.addInterceptor(
-            AuthInterceptor(tokenManager)
+            AuthInterceptor(tokenManager),
         )
 
         if (BuildConfig.DEBUG) {
