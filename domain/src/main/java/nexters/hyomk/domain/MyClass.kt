@@ -1,4 +1,3 @@
 package nexters.hyomk.domain
 
-class MyClass {
-}
+class MyClass
