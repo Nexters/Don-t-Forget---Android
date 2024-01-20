@@ -12,7 +12,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class TokenManager @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
+    private val dataStore: DataStore<Preferences>
 ) {
 
     companion object {

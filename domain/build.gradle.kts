@@ -11,7 +11,9 @@ java {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("javax.inject:javax.inject:${Versions.javax_inject}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}")
+    implementation(
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}"
+    )
 
     // alternatively - without Android dependencies for tests
     implementation("androidx.paging:paging-common:${Versions.paging_common}")
