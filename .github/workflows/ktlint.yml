@@ -16,7 +16,9 @@ jobs:
               with:
                   fetch-depth: 1
             - name: ktlint
-              uses: ScaCap/action-ktlint@master
+              run: ./gradlew --no-daemon ktlintCheck --continue
               with:
                   github_token: ${{ secrets.nexters_token }}
                   reporter: github-pr-check # Change reporter
+            - name: Build with Gradle
+              run: ./gradlew build
