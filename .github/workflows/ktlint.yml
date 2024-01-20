@@ -7,14 +7,9 @@ on:
             - develop
 jobs:
     ktlint:
-        name: Check Code Quality
         runs-on: ubuntu-latest
 
         steps:
-            - name: Clone repo
-              uses: actions/checkout@master
-              with:
-                  fetch-depth: 1
             - name: ktlint
               run: ./gradlew --no-daemon ktlintCheck --continue
               with:
