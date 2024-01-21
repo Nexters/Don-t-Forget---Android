@@ -1,9 +1,9 @@
 package nexters.hyomk.data.remote
 
-import nexters.hyomk.data.model.request.CreateAnniversary
-import nexters.hyomk.data.model.request.ModifyAnniversary
-import nexters.hyomk.data.model.response.AnniversaryItem
-import nexters.hyomk.data.model.response.DetailAnniversary
+import nexters.hyomk.data.model.request.CreateAnniversaryDTO
+import nexters.hyomk.data.model.request.ModifyAnniversaryDTO
+import nexters.hyomk.data.model.response.AnniversaryItemDTO
+import nexters.hyomk.data.model.response.DetailAnniversaryDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -15,16 +15,16 @@ import retrofit2.http.Path
 interface DontForgetService {
 
     @GET("/api/anniversary")
-    suspend fun getAnniversaryHistory(): Response<List<AnniversaryItem>>
+    suspend fun getAnniversaryHistory(): Response<List<AnniversaryItemDTO>>
 
     @GET("/api/anniversary/{eventId}")
-    suspend fun getAnniversary(@Path("eventId") eventId: Long): Response<DetailAnniversary>
+    suspend fun getAnniversary(@Path("eventId") eventId: Long): Response<DetailAnniversaryDTO>
 
     @POST("/api/anniversary")
-    suspend fun postAnniversary(@Body request: CreateAnniversary): Response<Unit>
+    suspend fun postAnniversary(@Body request: CreateAnniversaryDTO): Response<Unit>
 
     @PUT("/api/anniversary/{eventId}")
-    suspend fun modifyAnniversary(@Path("eventId") request: ModifyAnniversary): Response<Unit>
+    suspend fun modifyAnniversary(@Path("eventId") request: ModifyAnniversaryDTO): Response<Unit>
 
     @DELETE("/api/anniversary/{eventId}")
     suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Response<Unit>
