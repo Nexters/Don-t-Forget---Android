@@ -13,5 +13,5 @@ class DeviceInfoRepositoryImpl @Inject constructor(private val service: DontForg
 
     override suspend fun initDeviceId() = deviceInfoManager.initDeviceId()
 
-    override suspend fun changeAlarmState(eventId: Long): Flow<Unit> = SafeApiCall.call(service.deleteAnniversary(eventId))
+    override suspend fun changeAlarmState(): Flow<Unit> = SafeApiCall.call(service.modifyAlarmState())
 }
