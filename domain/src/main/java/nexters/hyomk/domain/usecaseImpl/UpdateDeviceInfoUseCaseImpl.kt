@@ -7,5 +7,5 @@ import javax.inject.Inject
 class UpdateDeviceInfoUseCaseImpl @Inject constructor(
     private val deviceInfoRepository: DeviceInfoRepository,
 ) : UpdateDeviceInfoUseCase {
-    override suspend fun invoke() = deviceInfoRepository.initDeviceId()
+    override suspend fun invoke(deviceId: String) = deviceInfoRepository.initDeviceId(deviceId)
 }

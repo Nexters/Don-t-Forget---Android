@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
-import java.util.UUID
 import javax.inject.Inject
 
 class DeviceInfoManager @Inject constructor(
@@ -29,10 +28,9 @@ class DeviceInfoManager @Inject constructor(
         return@map pref[DeviceInfoManager.DEVICE_KEY]
     }
 
-    suspend fun initDeviceId() {
+    suspend fun initDeviceId(deviceId: String) {
         dataStore.edit { prefs ->
-            val uuid = UUID.randomUUID().toString()
-            prefs[DeviceInfoManager.DEVICE_KEY] = uuid
+            prefs[DeviceInfoManager.DEVICE_KEY] = deviceId
         }
     }
 }

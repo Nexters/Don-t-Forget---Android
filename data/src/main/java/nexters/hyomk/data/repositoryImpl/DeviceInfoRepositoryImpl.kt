@@ -11,7 +11,7 @@ class DeviceInfoRepositoryImpl @Inject constructor(private val service: DontForg
     DeviceInfoRepository {
     override suspend fun getDeviceId(): Flow<String?> = deviceInfoManager.getDeviceId()
 
-    override suspend fun initDeviceId() = deviceInfoManager.initDeviceId()
+    override suspend fun initDeviceId(deviceId: String) = deviceInfoManager.initDeviceId(deviceId)
 
     override suspend fun changeAlarmState(): Flow<Unit> = SafeApiCall.call(service.modifyAlarmState())
 }
