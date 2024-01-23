@@ -6,43 +6,36 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import nexters.hyomk.dontforget.navigation.AppNavHost
+import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
+import nexters.hyomk.dontforget.ui.language.SupportLanguage
+import nexters.hyomk.dontforget.ui.language.getSupportGuide
 import nexters.hyomk.dontforget.ui.theme.DontForgetTheme
+import nexters.hyomk.dontforget.utils.enumValueOrNull
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val lan: String = Locale.getDefault().language
+    private val guide = getSupportGuide(lan.enumValueOrNull<SupportLanguage>())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             DontForgetTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
+                    CompositionLocalProvider(GuideCompositionLocal.provides(guide)) {
+                        AppNavHost(navController = rememberNavController())
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DontForgetTheme {
-        Greeting("Android")
     }
 }
