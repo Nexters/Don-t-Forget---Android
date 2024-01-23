@@ -17,6 +17,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import nexters.hyomk.data.util.DeviceInfoManager
 import nexters.hyomk.data.util.TokenManager
 import javax.inject.Singleton
 
@@ -54,6 +55,14 @@ object PreferenceDataStoreModule {
         @ApplicationContext context: Context,
     ): TokenManager {
         return TokenManager(context.dataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeviceInfoManager(
+        @ApplicationContext context: Context,
+    ): DeviceInfoManager {
+        return DeviceInfoManager(context.dataStore)
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
