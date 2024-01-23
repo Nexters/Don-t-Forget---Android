@@ -7,7 +7,7 @@ import nexters.hyomk.domain.usecase.GetAnniversaryListUseCase
 import javax.inject.Inject
 
 class GetAnniversaryListUseCaseImpl @Inject constructor(
-    private val anniversaryRepository: AnniversaryRepository
+    private val anniversaryRepository: AnniversaryRepository,
 ) : GetAnniversaryListUseCase {
     override suspend fun invoke(): Flow<List<AnniversaryItem>> = anniversaryRepository.getAnniversaryHistory()
 }
