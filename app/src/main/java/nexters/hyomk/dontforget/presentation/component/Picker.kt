@@ -50,7 +50,7 @@ import java.time.YearMonth
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ListPicker(
+fun Picker(
     items: List<Int>,
     unit: String,
     state: PickerState,
@@ -184,7 +184,7 @@ fun PickerExample() {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                ListPicker(
+                Picker(
                     state = yearPickerState,
                     items = years,
                     unit = "년",
@@ -194,7 +194,7 @@ fun PickerExample() {
                     textModifier = Modifier.padding(17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
-                ListPicker(
+                Picker(
                     state = monthPickerState,
                     items = months,
                     unit = "월",
@@ -204,7 +204,7 @@ fun PickerExample() {
                     textModifier = Modifier.padding(17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
-                ListPicker(
+                Picker(
                     state = dayPickerState,
                     items = (1..lastDay).toList(),
                     unit = "일",
