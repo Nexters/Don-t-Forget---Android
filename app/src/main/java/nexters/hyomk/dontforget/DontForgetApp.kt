@@ -7,6 +7,7 @@ import timber.log.Timber
 @HiltAndroidApp
 class DontForgetApp : Application() {
     private var instance: DontForgetApp? = null
+
     override fun onCreate() {
         super.onCreate()
         instance = this
