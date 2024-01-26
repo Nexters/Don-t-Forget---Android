@@ -43,7 +43,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray400
-import nexters.hyomk.dontforget.ui.theme.Gray900
+import nexters.hyomk.dontforget.ui.theme.Gray500
+import nexters.hyomk.dontforget.ui.theme.Gray800
+import nexters.hyomk.dontforget.ui.theme.Primary500
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -59,7 +61,7 @@ fun Picker(
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
-    dividerColor: Color = Gray400,
+    dividerColor: Color = Gray800,
 ) {
     val visibleItemsMiddle = visibleItemsCount / 2
     val listScrollCount = Integer.MAX_VALUE
@@ -100,7 +102,7 @@ fun Picker(
         ) {
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
-                val isSelectedColor = if (isSelectedItem) Gray900 else Gray400
+                val isSelectedColor = if (isSelectedItem) Primary500 else Gray400
                 val item = getItem(index).toString()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -126,7 +128,7 @@ fun Picker(
         Text(
             text = unit,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium.copy(color = Gray900),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Gray500),
             modifier = Modifier.align(Alignment.Center).heightIn(textStyle.fontSize.value.dp, itemHeightDp)
                 .offset(x = textStyle.fontSize.value.dp + 10.dp),
         )
