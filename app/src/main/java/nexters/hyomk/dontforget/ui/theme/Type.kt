@@ -19,16 +19,23 @@ val Pretendard = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    bodyMedium = TextStyle(
+    bodySmall = TextStyle(
         fontFamily = Pretendard,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
     ),
-    bodyLarge = TextStyle(
+    bodyMedium = TextStyle(
         fontFamily = Pretendard,
         fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp,
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight(500),
         fontSize = 24.sp,
         lineHeight = 28.64.sp,
         letterSpacing = 0.5.sp,
@@ -43,6 +50,13 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = Pretendard,
         fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        lineHeight = 23.87.sp,
+        letterSpacing = 0.5.sp,
+    ),
+    titleMedium = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 23.87.sp,
         letterSpacing = 0.5.sp,
@@ -65,7 +79,7 @@ val Typography = Typography(
         fontFamily = Pretendard,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        lineHeight = 29.04.sp,
+        lineHeight = 19.04.sp,
         letterSpacing = 0.5.sp,
     ),
     displayLarge = TextStyle(
