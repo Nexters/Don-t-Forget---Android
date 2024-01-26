@@ -3,9 +3,18 @@ package nexters.hyomk.dontforget.presentation.feature.create
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,17 +25,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import nexters.hyomk.domain.model.AlarmSchedule
+import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.presentation.component.BaseButton
 import nexters.hyomk.dontforget.presentation.component.BaseChip
 import nexters.hyomk.dontforget.presentation.component.BaseTextField
@@ -40,31 +51,32 @@ import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Pink500
 import nexters.hyomk.dontforget.ui.theme.White
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState", "UnrememberedMutableState")
 @Composable
 fun CreateScreen(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
+    viewModel: CreateViewModel = hiltViewModel(),
 ) {
-    val text = remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
-    val name = remember { mutableStateOf("") }
+    val year by remember { mutableStateOf(PickerState(uiState.year)) }
 
-    val memo = remember { mutableStateOf("") }
+    val month by remember { mutableStateOf(PickerState(uiState.month)) }
 
-    val year by remember { mutableStateOf(PickerState(2025)) }
-
-    val month by remember { mutableStateOf(PickerState(1)) }
-
-    val day by remember { mutableStateOf(PickerState(20)) }
+    val day by remember { mutableStateOf(PickerState(uiState.day)) }
 
     val guide = GuideCompositionLocal.current
 
-    val alarms = mutableStateListOf<AlarmSchedule>()
+    LaunchedEffect(uiState.dateType) {
+        viewModel.updateDate(year.selectedItem, month.selectedItem, day.selectedItem)
+    }
 
     Scaffold(
+        modifier = modifier.imePadding(),
         containerColor = Gray900,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
@@ -89,34 +101,48 @@ fun CreateScreen(
             )
         },
         bottomBar = {
-            Box(modifier = Modifier.padding(20.dp).padding(bottom = 16.dp)) {
-                BaseButton(text = guide.complete, onClick = {}, modifier = Modifier.fillMaxWidth())
+            Column {
+                Box(modifier = Modifier.padding(20.dp).padding(bottom = 16.dp)) {
+                    BaseButton(
+                        text = guide.complete,
+                        onClick = {
+                            viewModel.onClickSubmit(year.selectedItem, month.selectedItem, day.selectedItem)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
         },
-    ) {
+    ) { it ->
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
                 .padding(20.dp)
-                .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()),
+                .consumeWindowInsets(it)
+                .systemBarsPadding(),
         ) {
             item {
-                AnniversaryNameTextField(guide = guide, text = name)
+                AnniversaryNameTextField(guide = guide, text = uiState.name, onValueChange = viewModel::updateName)
 
-                AnniversaryDatePicker(guide, year, month, day)
+                AnniversaryDatePicker(guide, year, month, day, viewModel::updateDateType)
 
                 AnniversaryNotification(
                     guide = guide,
-                    alarms = alarms.toList(),
+                    alarms = uiState.alarms,
                     onClickChip = {
-                        if (alarms.contains(it)) {
-                            alarms.remove(it)
+                        val temp = ArrayList(uiState.alarms)
+                        if (temp.contains(it)) {
+                            temp.remove(it)
                         } else {
-                            alarms.add(it)
+                            temp.add(it)
                         }
+                        viewModel.updateAlarmSchedule(temp)
                     },
                 )
 
-                AnniversaryMemoTextField(guide = guide, text = memo)
+                AnniversaryMemoTextField(guide = guide, text = uiState.memo, onValueChange = viewModel::updateMemo)
             }
         }
     }
@@ -125,10 +151,11 @@ fun CreateScreen(
 @Composable
 fun AnniversaryMemoTextField(
     guide: TransGuide,
-    text: MutableState<String>,
+    text: String,
+    onValueChange: (String) -> Unit,
 ) {
     Text(text = guide.memoTitle, style = MaterialTheme.typography.titleSmall, color = White, modifier = Modifier.padding(top = 48.dp, bottom = 32.dp))
-    BaseTextField(value = text.value, onValueChange = { s -> text.value = s }, hint = guide.memoHint)
+    BaseTextField(value = text, onValueChange = onValueChange, hint = guide.memoHint)
 }
 
 @Composable
@@ -137,20 +164,27 @@ fun AnniversaryDatePicker(
     year: PickerState,
     month: PickerState,
     day: PickerState,
+    onValueChange: (AnniversaryDateType) -> Unit,
 ) {
     Row(modifier = Modifier.padding(top = 48.dp)) {
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
 
-    val (selected, setSelected) = remember {
-        mutableStateOf(0)
-    }
+    val (selected, setSelected) = remember { mutableStateOf(0) }
+
     Box(modifier = Modifier.padding(vertical = 32.dp)) {
         CustomDateTab(
             items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
             selectedItemIndex = selected,
-            onClick = setSelected,
+            onClick = { index ->
+                if (index == 0) {
+                    onValueChange(AnniversaryDateType.Solar)
+                } else {
+                    onValueChange(AnniversaryDateType.Lunar)
+                }
+                setSelected(index)
+            },
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -165,13 +199,14 @@ fun AnniversaryDatePicker(
 @Composable
 fun AnniversaryNameTextField(
     guide: TransGuide,
-    text: MutableState<String>,
+    text: String,
+    onValueChange: (String) -> Unit,
 ) {
     Row(modifier = Modifier.padding(bottom = 32.dp)) {
         Text(text = guide.anniversaryTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
-    BaseTextField(value = text.value, onValueChange = { s -> text.value = s }, hint = guide.createHint)
+    BaseTextField(value = text, onValueChange = onValueChange, hint = guide.createHint)
 }
 
 @Composable
