@@ -38,21 +38,20 @@ fun BaseButton(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
-    val color =
-        if (!enabled) {
-            Gray400
-        } else if (isPressed) {
-            Primary600
-        } else {
-            Primary500
-        }
+    val color = if (!enabled) {
+        Gray400
+    } else if (isPressed) {
+        Primary600
+    } else {
+        Primary500
+    }
 
     CompositionLocalProvider(
         LocalRippleTheme provides NoRippleTheme, // 버튼의 리플 이펙트 제거
     ) {
         Surface(
             onClick = { if (enabled) onClick() },
-            shape = RoundedCornerShape(12),
+            shape = RoundedCornerShape(12.dp),
             color = color,
             interactionSource = interactionSource,
         ) {
