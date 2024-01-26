@@ -3,6 +3,7 @@ package nexters.hyomk.dontforget
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,6 +16,7 @@ import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLo
 import nexters.hyomk.dontforget.ui.language.SupportLanguage
 import nexters.hyomk.dontforget.ui.language.getSupportGuide
 import nexters.hyomk.dontforget.ui.theme.DontForgetTheme
+import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.utils.enumValueOrNull
 import java.util.Locale
 
@@ -28,11 +30,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             DontForgetTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().background(color = Gray800),
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     CompositionLocalProvider(GuideCompositionLocal.provides(guide)) {
-                        AppNavHost(navController = rememberNavController())
+                        AppNavHost(modifier = Modifier.fillMaxSize().background(Gray800), navController = rememberNavController())
                     }
                 }
             }
