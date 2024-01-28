@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,66 +37,60 @@ fun CustomDatePicker(
     val years = (1900..2050).toList()
     val months = (1..12).toList()
 
-    Surface(
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(color = Gray900),
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Gray900),
+        var lastDay by remember { mutableIntStateOf(getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)) }
+
+        LaunchedEffect(yearPickerState.selectedItem, monthPickerState.selectedItem) {
+            val newLastDay = getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)
+            if (lastDay != newLastDay) {
+                lastDay = newLastDay
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            var lastDay by remember { mutableIntStateOf(getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)) }
-
-            LaunchedEffect(yearPickerState.selectedItem, monthPickerState.selectedItem) {
-                val newLastDay = getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)
-                if (lastDay != newLastDay) {
-                    lastDay = newLastDay
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Picker(
-                    state = yearPickerState,
-                    items = years,
-                    unit = "년",
-                    modifier = Modifier.weight(0.1f),
-                    visibleItemsCount = 3,
-                    startIndex = years.indexOf(yearPickerState.selectedItem),
-                    textModifier = Modifier.padding(17.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    initState = yInit,
-                )
-                Picker(
-                    state = monthPickerState,
-                    items = months,
-                    unit = "월",
-                    modifier = Modifier.weight(0.1f),
-                    visibleItemsCount = 3,
-                    startIndex = months.indexOf(monthPickerState.selectedItem),
-                    textModifier = Modifier.padding(17.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    initState = mInit,
-                )
-                Picker(
-                    state = dayPickerState,
-                    items = (1..lastDay).toList(),
-                    unit = "일",
-                    modifier = Modifier.weight(0.1f),
-                    visibleItemsCount = 3,
-                    startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
-                    textModifier = Modifier.padding(17.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    isDayPicker = true,
-                    initState = dInit,
-                )
-            }
+            Picker(
+                state = yearPickerState,
+                items = years,
+                unit = "년",
+                modifier = Modifier.weight(1f),
+                visibleItemsCount = 3,
+                startIndex = years.indexOf(yearPickerState.selectedItem),
+                textModifier = Modifier.padding(vertical = 17.dp),
+                textStyle = MaterialTheme.typography.bodyLarge,
+                initState = yInit,
+            )
+            Picker(
+                state = monthPickerState,
+                items = months,
+                unit = "월",
+                modifier = Modifier.weight(1f),
+                visibleItemsCount = 3,
+                startIndex = months.indexOf(monthPickerState.selectedItem),
+                textModifier = Modifier.padding(vertical = 17.dp),
+                textStyle = MaterialTheme.typography.bodyLarge,
+                initState = mInit,
+            )
+            Picker(
+                state = dayPickerState,
+                items = (1..lastDay).toList(),
+                unit = "일",
+                modifier = Modifier.weight(1f),
+                visibleItemsCount = 3,
+                startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
+                textModifier = Modifier.padding(vertical = 17.dp),
+                textStyle = MaterialTheme.typography.bodyLarge,
+                isDayPicker = true,
+                initState = dInit,
+            )
         }
     }
 }

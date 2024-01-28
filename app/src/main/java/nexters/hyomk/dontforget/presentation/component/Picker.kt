@@ -131,7 +131,9 @@ fun Picker(
             state = listState,
             flingBehavior = flingBehavior,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().height(itemHeightDp * visibleItemsCount),
+            modifier = Modifier
+                .height(itemHeightDp * visibleItemsCount)
+                .fillMaxWidth(),
         ) {
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
@@ -140,7 +142,7 @@ fun Picker(
                 val item = getItem(index).toString()
 
                 Row(
-                    horizontalArrangement = Arrangement.Start,
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -150,9 +152,14 @@ fun Picker(
                         style = textStyle.plus(
                             TextStyle(color = isSelectedColor),
                         ),
-                        modifier = Modifier.onSizeChanged { size ->
-                            if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
-                        }.then(textModifier),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .onSizeChanged { size ->
+                                if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
+                            }
+                            .then(textModifier)
+                            .offset(x = - 10.dp),
+
                     )
                 }
             }
@@ -167,8 +174,10 @@ fun Picker(
             text = unit,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium.copy(color = Gray500),
-            modifier = Modifier.align(Alignment.Center).heightIn(textStyle.fontSize.value.dp, itemHeightDp)
-                .offset(x = textStyle.fontSize.value.dp + 10.dp),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .heightIn(textStyle.fontSize.value.dp, itemHeightDp)
+                .offset(x = textStyle.fontSize.value.dp),
         )
 
         Divider(
@@ -231,7 +240,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = years.indexOf(today.year),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
                 Picker(
@@ -241,7 +250,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = months.indexOf(today.monthValue),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
                 Picker(
@@ -251,7 +260,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
             }
