@@ -79,6 +79,7 @@ fun BaseTextField(
     CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
         Column {
             BasicTextField(
+                modifier = modifier,
                 value = value,
                 onValueChange = {
                     val newValue = if (counterMaxLength > 0) {

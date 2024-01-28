@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray500
+import nexters.hyomk.dontforget.ui.theme.Gray600
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import java.time.LocalDateTime
@@ -138,7 +139,7 @@ fun Picker(
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
 
-                val isSelectedColor = if (isSelectedItem) Primary500 else Gray400
+                val isSelectedColor = if (isSelectedItem) Primary500 else Gray600
                 val item = getItem(index).toString()
 
                 Row(

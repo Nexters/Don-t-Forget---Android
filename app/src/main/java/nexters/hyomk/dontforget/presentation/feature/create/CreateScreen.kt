@@ -37,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -323,17 +325,30 @@ fun AnniversaryDatePicker(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun AnniversaryNameTextField(
     guide: TransGuide,
     text: String,
     onValueChange: (String) -> Unit,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Row(modifier = Modifier.padding(bottom = 32.dp)) {
         Text(text = guide.anniversaryTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
-    BaseTextField(value = text, onValueChange = onValueChange, hint = guide.createHint)
+    BaseTextField(
+        modifier = Modifier.focusRequester(focusRequester),
+        value = text,
+        onValueChange = onValueChange,
+        hint = guide.createHint,
+
+    )
 }
 
 @Composable
