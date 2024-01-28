@@ -30,7 +30,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,7 +48,6 @@ import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray500
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Primary500
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.YearMonth
 
@@ -62,6 +63,8 @@ fun Picker(
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     dividerColor: Color = Gray800,
+    isDayPicker: Boolean = false,
+    initState: Int = items.indexOf(state.selectedItem),
 ) {
     val visibleItemsMiddle = visibleItemsCount / 2
     val listScrollCount = Integer.MAX_VALUE
@@ -76,20 +79,50 @@ fun Picker(
     val itemHeightPixels = remember { mutableStateOf(0) }
     val itemHeightDp = pixelsToDp(itemHeightPixels.value)
 
-    LaunchedEffect(items.size) {
-        val newStartIndex = listScrollMiddle - listScrollMiddle % items.size - visibleItemsMiddle + startIndex
-        if (newStartIndex != listStartIndex) {
-            listStartIndex = newStartIndex
-            Timber.d("${items.size} & start $startIndex")
-            listState.scrollToItem(newStartIndex)
-        }
-    }
+    var isLaunched by remember { mutableStateOf(false) }
 
-    LaunchedEffect(listState, items.size) {
+    val haptic = LocalHapticFeedback.current
+
+    suspend fun initListState() {
         snapshotFlow { Triple(listState.firstVisibleItemIndex, startIndex, items.size) }.map { (index, offset) ->
             getItem((index + visibleItemsMiddle) % items.size)
         }.distinctUntilChanged().collect { item ->
             state.selectedItem = item
+        }
+    }
+
+    suspend fun scrollToSelectItem() {
+        val newStartIndex = listScrollMiddle - listScrollMiddle % items.size - visibleItemsMiddle + startIndex
+        if (newStartIndex != listStartIndex) {
+            listStartIndex = newStartIndex
+            listState.scrollToItem(newStartIndex)
+        }
+    }
+
+    if (isDayPicker) {
+        LaunchedEffect(items.size, initState) {
+            isLaunched = false
+            scrollToSelectItem()
+        }
+        LaunchedEffect(listState, items.size) {
+            initListState()
+        }
+    } else {
+        LaunchedEffect(initState) {
+            isLaunched = false
+            scrollToSelectItem()
+        }
+
+        LaunchedEffect(listState) {
+            initListState()
+        }
+    }
+
+    LaunchedEffect(state.selectedItem) {
+        if (isLaunched) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        } else {
+            isLaunched = true
         }
     }
 
@@ -102,9 +135,12 @@ fun Picker(
         ) {
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
+
                 val isSelectedColor = if (isSelectedItem) Primary500 else Gray400
                 val item = getItem(index).toString()
+
                 Row(
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -114,7 +150,9 @@ fun Picker(
                         style = textStyle.plus(
                             TextStyle(color = isSelectedColor),
                         ),
-                        modifier = Modifier.onSizeChanged { size -> itemHeightPixels.value = size.height }.then(textModifier),
+                        modifier = Modifier.onSizeChanged { size ->
+                            if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
+                        }.then(textModifier),
                     )
                 }
             }
