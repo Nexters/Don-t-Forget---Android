@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -61,6 +62,7 @@ import nexters.hyomk.dontforget.presentation.component.PickerState
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.presentation.utils.LunarCalendarUtil
 import nexters.hyomk.dontforget.presentation.utils.addFocusCleaner
+import nexters.hyomk.dontforget.presentation.utils.isKeyboardVisible
 import nexters.hyomk.dontforget.ui.language.TransGuide
 import nexters.hyomk.dontforget.ui.theme.Gray600
 import nexters.hyomk.dontforget.ui.theme.Gray900
@@ -143,20 +145,32 @@ fun CreateScreen(
             )
         },
         bottomBar = {
-            Column {
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 16.dp),
-                ) {
-                    BaseButton(
-                        text = guide.complete,
-                        onClick = {
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+            if (isKeyboardVisible()) {
+                BaseButton(
+                    enabled = uiState.name.isNotBlank(),
+                    text = guide.complete,
+                    onClick = {
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .padding(bottom = 16.dp),
+                    ) {
+                        BaseButton(
+                            enabled = uiState.name.isNotBlank(),
+                            text = guide.complete,
+                            shape = RoundedCornerShape(12.dp),
+                            onClick = {
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    Spacer(modifier = Modifier.navigationBarsPadding())
                 }
-                Spacer(modifier = Modifier.navigationBarsPadding())
             }
         },
     ) { it ->
