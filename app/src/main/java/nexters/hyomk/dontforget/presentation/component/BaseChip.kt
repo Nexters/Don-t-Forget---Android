@@ -1,7 +1,6 @@
 package nexters.hyomk.dontforget.presentation.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import nexters.hyomk.dontforget.presentation.utils.noRippleClickable
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray700
 import nexters.hyomk.dontforget.ui.theme.Primary500
@@ -38,7 +38,7 @@ fun BaseChip(
 
     Column {
         Box(
-            modifier = selectModifier.clickable {
+            modifier = selectModifier.noRippleClickable {
                 onClick(text)
             },
             contentAlignment = Alignment.Center,
