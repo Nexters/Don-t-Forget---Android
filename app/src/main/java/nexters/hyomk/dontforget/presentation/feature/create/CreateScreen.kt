@@ -1,6 +1,7 @@
 package nexters.hyomk.dontforget.presentation.feature.create
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -99,20 +99,23 @@ fun CreateScreen(
         mutableStateOf(true)
     }
 
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     if (showDialog) {
         Dialog(onDismissRequest = {}) {
             BaseAlertDialog(
-                title = "기념일 만들기 취소?",
-                content = "챙겨챙겨",
-                left = "닫기",
+                title = guide.createDialogTitle,
+                content = guide.createDialogContent,
+                left = guide.close,
                 right = guide.cancel,
                 onClickLeft = { showDialog = false },
                 onClickRight = { showDialog = false },
             )
         }
+    }
+
+    BackHandler {
+        showDialog = true
     }
 
     Scaffold(
@@ -121,6 +124,7 @@ fun CreateScreen(
             .imePadding(),
         containerColor = Gray900,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
@@ -132,7 +136,9 @@ fun CreateScreen(
                 },
                 navigationIcon = {
                     TextButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            showDialog = true
+                        },
                     ) {
                         Text(
                             text = guide.cancel,

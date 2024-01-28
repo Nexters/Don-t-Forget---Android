@@ -5,6 +5,7 @@ import nexters.hyomk.domain.model.AlarmSchedule
 class KorGuide() : TransGuide() {
     override val appName: String = "챙겨챙겨"
     override val complete: String = "완료"
+    override val close: String = "닫기"
     override val cancel: String = "취소"
     override val anniversaryTitle: String = "기념일 이름"
     override val createTitle: String = "기념일 만들기"
@@ -17,6 +18,10 @@ class KorGuide() : TransGuide() {
     override val month: String = "월"
     override val day: String = "일"
     override val notificationTitle: String = "미리 알림"
+    override val createDialogContent: String = "만들고 있던 기념일은\n" + "저장되지 않고, 사라집니다."
+    override val createDialogTitle: String = "기념일 만들기를 취소할까요?"
+    override val check: String = "확인"
+
     override fun transNotificationPeriod(alarmSchedule: AlarmSchedule): String {
         return when (alarmSchedule) {
             AlarmSchedule.Month -> "1달 전"
