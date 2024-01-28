@@ -30,7 +30,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,9 +44,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
-import nexters.hyomk.dontforget.ui.theme.Gray400
-import nexters.hyomk.dontforget.ui.theme.Gray900
-import timber.log.Timber
+import nexters.hyomk.dontforget.ui.theme.Gray500
+import nexters.hyomk.dontforget.ui.theme.Gray600
+import nexters.hyomk.dontforget.ui.theme.Gray800
+import nexters.hyomk.dontforget.ui.theme.Primary500
 import java.time.LocalDateTime
 import java.time.YearMonth
 
@@ -59,7 +62,9 @@ fun Picker(
     visibleItemsCount: Int = 3,
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
-    dividerColor: Color = Gray400,
+    dividerColor: Color = Gray800,
+    isDayPicker: Boolean = false,
+    initState: Int = items.indexOf(state.selectedItem),
 ) {
     val visibleItemsMiddle = visibleItemsCount / 2
     val listScrollCount = Integer.MAX_VALUE
@@ -74,20 +79,50 @@ fun Picker(
     val itemHeightPixels = remember { mutableStateOf(0) }
     val itemHeightDp = pixelsToDp(itemHeightPixels.value)
 
-    LaunchedEffect(items.size) {
-        val newStartIndex = listScrollMiddle - listScrollMiddle % items.size - visibleItemsMiddle + startIndex
-        if (newStartIndex != listStartIndex) {
-            listStartIndex = newStartIndex
-            Timber.d("${items.size} & start $startIndex")
-            listState.scrollToItem(newStartIndex)
-        }
-    }
+    var isLaunched by remember { mutableStateOf(false) }
 
-    LaunchedEffect(listState, items.size) {
+    val haptic = LocalHapticFeedback.current
+
+    suspend fun initListState() {
         snapshotFlow { Triple(listState.firstVisibleItemIndex, startIndex, items.size) }.map { (index, offset) ->
             getItem((index + visibleItemsMiddle) % items.size)
         }.distinctUntilChanged().collect { item ->
             state.selectedItem = item
+        }
+    }
+
+    suspend fun scrollToSelectItem() {
+        val newStartIndex = listScrollMiddle - listScrollMiddle % items.size - visibleItemsMiddle + startIndex
+        if (newStartIndex != listStartIndex) {
+            listStartIndex = newStartIndex
+            listState.scrollToItem(newStartIndex)
+        }
+    }
+
+    if (isDayPicker) {
+        LaunchedEffect(items.size, initState) {
+            isLaunched = false
+            scrollToSelectItem()
+        }
+        LaunchedEffect(listState, items.size) {
+            initListState()
+        }
+    } else {
+        LaunchedEffect(initState) {
+            isLaunched = false
+            scrollToSelectItem()
+        }
+
+        LaunchedEffect(listState) {
+            initListState()
+        }
+    }
+
+    LaunchedEffect(state.selectedItem) {
+        if (isLaunched) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        } else {
+            isLaunched = true
         }
     }
 
@@ -96,13 +131,18 @@ fun Picker(
             state = listState,
             flingBehavior = flingBehavior,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().height(itemHeightDp * visibleItemsCount),
+            modifier = Modifier
+                .height(itemHeightDp * visibleItemsCount)
+                .fillMaxWidth(),
         ) {
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
-                val isSelectedColor = if (isSelectedItem) Gray900 else Gray400
+
+                val isSelectedColor = if (isSelectedItem) Primary500 else Gray600
                 val item = getItem(index).toString()
+
                 Row(
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
@@ -112,7 +152,14 @@ fun Picker(
                         style = textStyle.plus(
                             TextStyle(color = isSelectedColor),
                         ),
-                        modifier = Modifier.onSizeChanged { size -> itemHeightPixels.value = size.height }.then(textModifier),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .onSizeChanged { size ->
+                                if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
+                            }
+                            .then(textModifier)
+                            .offset(x = -10.dp),
+
                     )
                 }
             }
@@ -126,9 +173,11 @@ fun Picker(
         Text(
             text = unit,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium.copy(color = Gray900),
-            modifier = Modifier.align(Alignment.Center).heightIn(textStyle.fontSize.value.dp, itemHeightDp)
-                .offset(x = textStyle.fontSize.value.dp + 10.dp),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Gray500),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .heightIn(textStyle.fontSize.value.dp, itemHeightDp)
+                .offset(x = textStyle.fontSize.value.dp),
         )
 
         Divider(
@@ -191,7 +240,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = years.indexOf(today.year),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
                 Picker(
@@ -201,7 +250,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = months.indexOf(today.monthValue),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
                 Picker(
@@ -211,7 +260,7 @@ fun PickerExample() {
                     modifier = Modifier.weight(0.1f),
                     visibleItemsCount = 3,
                     startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
-                    textModifier = Modifier.padding(17.dp),
+                    textModifier = Modifier.padding(vertical = 17.dp),
                     textStyle = MaterialTheme.typography.bodyLarge,
                 )
             }
