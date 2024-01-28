@@ -17,6 +17,6 @@ fun String.toCalendarFormat(format: SimpleDateFormat = SimpleDateFormat("yyyy.MM
     return calendar
 }
 
-fun Calendar.toString(format: SimpleDateFormat = SimpleDateFormat("yyyy.MM.dd")): String {
+fun Calendar.toFormatString(format: SimpleDateFormat = SimpleDateFormat("yyyy.MM.dd")): String {
     return format.format(this.time)
 }

@@ -32,18 +32,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.presentation.component.AddAnniversaryButton
+import nexters.hyomk.dontforget.presentation.component.card.ATypeCard
+import nexters.hyomk.dontforget.presentation.component.card.AnniversaryCard
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Primary600
 import timber.log.Timber
+import java.util.Calendar
 import kotlin.math.roundToInt
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    val list = (1..100).toList()
+    val list = (1..10).toList()
     val guide = GuideCompositionLocal.current
     val bottomState = rememberBottomSheetScaffoldState(
         SheetState(
@@ -73,6 +76,7 @@ fun HomeScreen() {
     BottomSheetScaffold(
         modifier = Modifier.background(Gray900),
         sheetContainerColor = Gray900,
+        containerColor = Gray900,
         scaffoldState = bottomState,
         sheetShape = RectangleShape,
         sheetPeekHeight = 300.dp,
@@ -94,11 +98,24 @@ fun HomeScreen() {
                     ),
                     horizontalArrangement = Arrangement.SpaceAround,
                     content = {
-                        items(list.size) { index ->
-                            Box(modifier = Modifier.padding(8.dp)) {
-                                AddAnniversaryButton(
-                                    text = guide.createTitle + list[index].toString(),
-                                )
+                        items(list.size + 1) { index ->
+                            if (index == list.size) {
+                                Box(modifier = Modifier.padding(8.dp)) {
+                                    AddAnniversaryButton(
+                                        text = guide.createTitle,
+                                    )
+                                }
+                            } else {
+                                Box(modifier = Modifier.padding(8.dp)) {
+                                    val calendar = Calendar.getInstance()
+                                    calendar.set(2024, 3, 24)
+
+                                    AnniversaryCard(
+                                        properties = ATypeCard(),
+                                        title = "생일이다",
+                                        date = calendar,
+                                    )
+                                }
                             }
                         }
                     },

@@ -16,5 +16,7 @@ val White = Color(0xFFFFFFFF)
 
 val Red500 = Color(0xFFFF5C26)
 val Pink500 = Color(0xFFEF83AB)
+val Yellow500 = Color(0xFFFFCD00)
 val Primary500 = Color(0xFF3D82F6)
 val Primary600 = Color(0xFF2B62D4)
+val Primary700 = Color(0xFF1E48B1)
