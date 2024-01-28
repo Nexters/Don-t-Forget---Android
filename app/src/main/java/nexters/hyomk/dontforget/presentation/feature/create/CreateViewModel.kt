@@ -58,7 +58,7 @@ class CreateViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onClickSubmit(year: Int, month: Int, day: Int) {
-        updateDate(year, month, day)
+        // updateDate(year, month, day)
         Timber.d(uiState.value.toString())
     }
 }

@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -36,7 +38,7 @@ import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import nexters.hyomk.dontforget.ui.theme.White
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun BaseTextField(
     value: String,
@@ -64,7 +66,10 @@ fun BaseTextField(
         24.sp.toDp()
     }
 
-    val baseModifier = Modifier.fillMaxWidth().heightIn(min = TextFieldMinHeight, max = TextFieldMaxHeight).padding(horizontal = 17.dp)
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val baseModifier =
+        Modifier.fillMaxWidth().heightIn(min = TextFieldMinHeight, max = TextFieldMaxHeight).padding(horizontal = 17.dp)
 
     val customTextSelectionColors = TextSelectionColors(
         handleColor = Primary500,
@@ -83,10 +88,15 @@ fun BaseTextField(
                     }
                     onValueChange(newValue)
                 },
+
                 enabled = enabled,
                 textStyle = textStyle.copy(textAlign = TextAlign.Center),
                 keyboardOptions = keyboardOptions,
-                keyboardActions = keyboardActions,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                    },
+                ),
                 singleLine = isSingleLine,
                 interactionSource = interactionSource,
                 visualTransformation = visualTransformation,

@@ -158,7 +158,7 @@ fun Picker(
                                 if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
                             }
                             .then(textModifier)
-                            .offset(x = - 10.dp),
+                            .offset(x = -10.dp),
 
                     )
                 }
