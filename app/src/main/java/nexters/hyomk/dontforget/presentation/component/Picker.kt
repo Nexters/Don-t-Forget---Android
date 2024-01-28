@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
-import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray500
 import nexters.hyomk.dontforget.ui.theme.Gray600
 import nexters.hyomk.dontforget.ui.theme.Gray800
