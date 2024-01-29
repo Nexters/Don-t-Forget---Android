@@ -40,7 +40,6 @@ fun AnniversaryCard(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     val today = Calendar.getInstance()
-    val targetDate = date.time
     val dday = (today.time.time - date.time.time) / (60 * 60 * 24 * 1000)
 
     val isPressed by interactionSource.collectIsPressedAsState()
