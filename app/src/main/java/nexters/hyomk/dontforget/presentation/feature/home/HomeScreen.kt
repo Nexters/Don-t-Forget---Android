@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -46,9 +47,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import nexters.hyomk.domain.model.AnniversaryItem
 import nexters.hyomk.dontforget.navigation.NavigationItem
 import nexters.hyomk.dontforget.presentation.component.AddAnniversaryButton
 import nexters.hyomk.dontforget.presentation.component.card.ATypeCard
@@ -66,6 +70,7 @@ import kotlin.math.roundToInt
 @Composable
 fun HomeScreen(
     navHostController: NavHostController,
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     fun createInitialBottomSheetState(): BottomSheetScaffoldState {
         return BottomSheetScaffoldState(
@@ -78,23 +83,32 @@ fun HomeScreen(
         )
     }
 
-    val list = (1..20).toList()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle(HomeUiState.Loading)
+
     val guide = GuideCompositionLocal.current
+
     var bottomState: BottomSheetScaffoldState by remember { mutableStateOf(createInitialBottomSheetState()) }
+    val listState = rememberLazyGridState(
+        initialFirstVisibleItemIndex = 0,
+        initialFirstVisibleItemScrollOffset = 0,
+    )
 
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
+    val density = LocalDensity.current
 
     val displayMetrics = context.resources.displayMetrics
     val maxHeightPx = displayMetrics.heightPixels
-    var offset = remember { mutableIntStateOf(0) }
+    val offset = remember { mutableIntStateOf(0) }
     var sheetPeekHeight by remember { mutableStateOf(0.dp) }
 
-    val density = LocalDensity.current
+    var selectedAnniversary: AnniversaryItem? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
-        Timber.d("init screen ${bottomState.bottomSheetState}")
+        homeViewModel.getAnniversaryList()
         bottomState = createInitialBottomSheetState()
+    }
+    LaunchedEffect(selectedAnniversary) {
     }
 
     fun closeSheet() {
@@ -105,6 +119,7 @@ fun HomeScreen(
 
     fun partialExpandSheet() {
         coroutine.launch {
+            listState.scrollToItem(0)
             bottomState.bottomSheetState.partialExpand()
         }
     }
@@ -146,45 +161,62 @@ fun HomeScreen(
                         }
                     },
             ) {
-                Column() {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(
-                            start = 16.dp,
-                            top = 16.dp,
-                            end = 16.dp,
-                            bottom = 16.dp,
-                        ),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        content = {
-                            items(list.size + 1) { index ->
-                                if (index == list.size) {
-                                    Box(modifier = Modifier.padding(8.dp)) {
-                                        AddAnniversaryButton(
-                                            text = guide.createTitle,
-                                        )
-                                    }
-                                } else {
-                                    Box(modifier = Modifier.padding(8.dp)) {
-                                        val calendar = Calendar.getInstance()
-                                        calendar.set(2024, 3, 24)
+                when (uiState) {
+                    is HomeUiState.Loading -> {}
+                    is HomeUiState.Success -> {
+                        with((uiState as HomeUiState.Success)) {
+                            Column() {
+                                LazyVerticalGrid(
+                                    state = listState,
+                                    columns = GridCells.Fixed(2),
+                                    contentPadding = PaddingValues(
+                                        start = 16.dp,
+                                        top = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp,
+                                    ),
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    content = {
+                                        items(list.size + 1) { index ->
+                                            if (index == list.size) {
+                                                Box(modifier = Modifier.padding(8.dp)) {
+                                                    AddAnniversaryButton(
+                                                        text = guide.createTitle,
+                                                        onClick = {
+                                                            navHostController.navigate(NavigationItem.Create.route)
+                                                        },
+                                                    )
+                                                }
+                                            } else {
+                                                Box(modifier = Modifier.padding(8.dp)) {
+                                                    val calendar = Calendar.getInstance()
+                                                    calendar.set(2024, 3, 24)
 
-                                        AnniversaryCard(
-                                            properties = ATypeCard(),
-                                            title = "생일이다",
-                                            date = calendar,
-                                            onClick = {
-                                                navHostController.navigate(NavigationItem.Create.route)
-                                            },
-                                        )
-                                    }
-                                }
+                                                    AnniversaryCard(
+                                                        properties = ATypeCard(),
+                                                        title = "생일이다",
+                                                        date = calendar,
+                                                        onClick = {
+                                                            selectedAnniversary = list[index]
+                                                            closeSheet()
+                                                        },
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    },
+                                )
+                                Spacer(
+                                    Modifier.navigationBarsPadding(),
+                                )
                             }
-                        },
-                    )
-                    Spacer(
-                        Modifier.navigationBarsPadding(),
-                    )
+                        }
+                    }
+
+                    is HomeUiState.Fail -> {
+                    }
+
+                    else -> {}
                 }
             }
         },
@@ -196,6 +228,7 @@ fun HomeScreen(
             padding = it,
             navHostController = navHostController,
             gestureModifier = gestureModifier,
+            selected = selectedAnniversary,
         )
     }
 }
@@ -209,6 +242,7 @@ fun FlexAnniversaryContent(
     maxHeightPx: Int,
     padding: PaddingValues,
     navHostController: NavHostController,
+    selected: AnniversaryItem?,
 ) {
     val topBarHeight = 24.dp
 
@@ -246,7 +280,7 @@ fun FlexAnniversaryContent(
                         .fillMaxSize(),
 
                 ) {
-                    DetailContent(navHostController)
+                    DetailContent(navHostController, selected, offset.value)
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import nexters.hyomk.domain.model.AnniversaryDateType
+import nexters.hyomk.domain.model.AnniversaryItem
 import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.domain.utils.calculateDDay
 import nexters.hyomk.domain.utils.toFormatString
@@ -44,6 +46,8 @@ import java.util.Calendar
 @Composable
 fun DetailContent(
     navHostController: NavHostController,
+    selectedAnniversaryItem: AnniversaryItem?,
+    offset: Int = 0,
 
 ) {
     val type = ATypeCard()
@@ -58,10 +62,11 @@ fun DetailContent(
     )
 
     fun getDDay(): Long {
+        if (selectedAnniversaryItem == null) return 0L
         return if (anniversaryItem.type == AnniversaryDateType.Lunar) {
-            calculateDDay(anniversaryItem.lunarDate.time)
+            calculateDDay(selectedAnniversaryItem!!.lunarDate.time)
         } else {
-            calculateDDay(anniversaryItem.solarDate.time)
+            calculateDDay(selectedAnniversaryItem!!.solarDate.time)
         }
     }
 
@@ -75,59 +80,71 @@ fun DetailContent(
             contentScale = ContentScale.Crop,
         )
 
-        Box(modifier = Modifier, contentAlignment = Alignment.BottomCenter) {
-            Column(
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.fillMaxSize()
-                    .padding(horizontal = 36.dp).offset(y = 100.dp),
-            ) {
-                Text(text = "${anniversaryItem.lunarDate.toFormatString()}", style = MaterialTheme.typography.titleSmall, color = type.dateColor)
-
-                Text(text = "D$dday", style = MaterialTheme.typography.headlineLarge, color = type.dDayColor)
-                Spacer(modifier = Modifier.height(20.dp))
-                Row(Modifier.wrapContentHeight(), verticalAlignment = Alignment.CenterVertically) {
-                    Divider(
-                        modifier = Modifier
-                            .heightIn(min = 51.dp)
-                            .width(2.5.dp),
-                        color = type.dDayColor,
-                    )
-                    Column(modifier = Modifier.padding(start = 16.dp)) {
+        if (selectedAnniversaryItem != null) {
+            Box(modifier = Modifier, contentAlignment = Alignment.TopCenter) {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier
+                        .padding(horizontal = 36.dp),
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight().offset(y = -200.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                    ) {
                         Text(
-                            text = anniversaryItem.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = type.titleColor,
-                            modifier = Modifier
-                                .padding(bottom = 8.dp),
+                            text = "${selectedAnniversaryItem?.lunarDate?.toFormatString()}",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = type.dateColor,
                         )
 
-                        Text(text = anniversaryItem.content, style = MaterialTheme.typography.titleSmall, color = type.dateColor)
+                        Text(text = "D$dday", style = MaterialTheme.typography.headlineLarge, color = type.dDayColor)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(Modifier.wrapContentHeight(), verticalAlignment = Alignment.CenterVertically) {
+                            Divider(
+                                modifier = Modifier
+                                    .heightIn(min = 51.dp)
+                                    .width(2.5.dp),
+                                color = type.dDayColor,
+                            )
+                            Column(modifier = Modifier.padding(start = 16.dp)) {
+                                Text(
+                                    text = selectedAnniversaryItem.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = type.titleColor,
+                                    modifier = Modifier
+                                        .padding(bottom = 8.dp),
+                                )
+
+                                Text(text = "sample", style = MaterialTheme.typography.titleSmall, color = type.dateColor)
+                            }
+                        }
                     }
+                    Spacer(modifier = Modifier.fillMaxHeight().weight(0.4f))
                 }
             }
-        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-
+                    .fillMaxSize(),
             ) {
-                BaseIconButton(icon = R.drawable.ic_back, onClick = { })
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
 
-                Row() {
-                    BaseIconButton(
-                        icon = R.drawable.ic_edit,
-                        onClick = {
-                            navHostController.navigate(NavigationItem.Edit.route)
-                        },
-                    )
-                    BaseIconButton(icon = R.drawable.ic_delete, onClick = { })
+                ) {
+                    BaseIconButton(icon = R.drawable.ic_back, onClick = { })
+
+                    Row() {
+                        BaseIconButton(
+                            icon = R.drawable.ic_edit,
+                            onClick = {
+                                navHostController.navigate(NavigationItem.Create.route)
+                            },
+                        )
+                        BaseIconButton(icon = R.drawable.ic_delete, onClick = { })
+                    }
                 }
             }
         }
@@ -137,5 +154,13 @@ fun DetailContent(
 @Preview
 @Composable
 fun PreviewDetailScreen() {
-    DetailContent(rememberNavController())
+    DetailContent(
+        rememberNavController(),
+        AnniversaryItem(
+            eventId = 1L,
+            title = "something",
+            lunarDate = Calendar.getInstance().apply { set(1999, 1, 3) },
+            solarDate = Calendar.getInstance().apply { set(1999, 3, 3) },
+        ),
+    )
 }

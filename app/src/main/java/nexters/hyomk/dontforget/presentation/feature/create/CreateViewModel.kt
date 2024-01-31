@@ -69,7 +69,7 @@ data class CreateUiState(
     val year: Int,
     val month: Int,
     val day: Int,
-    val alarms: List<AlarmSchedule> = listOf(),
+    val alarms: List<AlarmSchedule> = listOf(AlarmSchedule.DDay),
     val dateType: AnniversaryDateType = AnniversaryDateType.Solar,
 )
 
