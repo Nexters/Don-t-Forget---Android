@@ -22,6 +22,8 @@ class JpnGuide : TransGuide() {
     override val createDialogContent: String = "만들고 있던 기념일은\n" + "저장되지 않고, 사라집니다."
     override val createDialogTitle: String = "기념일 만들기를 취소할까요?"
     override val check: String = "확인"
+    override val next: String = "다음"
+
     override fun transNotificationPeriod(alarmSchedule: AlarmSchedule): String {
         return when (alarmSchedule) {
             AlarmSchedule.Month -> "1달 전"
