@@ -1,9 +1,13 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
 }
+
+val localProperties = gradleLocalProperties(rootDir)
 
 android {
     namespace = "nexters.hyomk.dontforget"
@@ -20,6 +24,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"${getProperty("BASE_URL")}\"")
     }
 
     buildTypes {
@@ -86,4 +92,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-core:${Versions.datastore}")
     implementation("androidx.datastore:datastore-preferences:${Versions.datastore}")
     implementation("io.coil-kt:coil-compose:${Versions.coil}")
+}
+
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }
