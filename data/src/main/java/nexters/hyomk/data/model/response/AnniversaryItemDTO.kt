@@ -3,6 +3,7 @@ package nexters.hyomk.data.model.response
 import com.google.gson.annotations.SerializedName
 import nexters.hyomk.domain.model.AnniversaryItem
 import nexters.hyomk.domain.utils.toCalendarFormat
+import java.text.SimpleDateFormat
 
 data class AnniversaryItemDTO(
     @SerializedName("eventId") val eventId: Long,
@@ -11,11 +12,12 @@ data class AnniversaryItemDTO(
     @SerializedName("solarDate") val solarDate: String,
 )
 
+@Suppress("SimpleDateFormat")
 fun AnniversaryItemDTO.toDomain(): AnniversaryItem {
     return AnniversaryItem(
         eventId = eventId,
         title = title,
-        lunarDate = this.lunarDate.toCalendarFormat(),
-        solarDate = this.solarDate.toCalendarFormat(),
+        lunarDate = this.lunarDate.toCalendarFormat(format = SimpleDateFormat("yyyy-MM-dd")),
+        solarDate = this.solarDate.toCalendarFormat(format = SimpleDateFormat("yyyy-MM-dd")),
     )
 }

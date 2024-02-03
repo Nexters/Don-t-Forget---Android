@@ -5,6 +5,7 @@ import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.domain.utils.toCalendarFormat
+import java.text.SimpleDateFormat
 
 data class DetailAnniversaryDTO(
     @SerializedName("eventId") val eventId: Long,
@@ -16,12 +17,13 @@ data class DetailAnniversaryDTO(
     @SerializedName("type") val type: String,
 )
 
+@Suppress("SimpleDateFormat")
 fun DetailAnniversaryDTO.toDomain(): DetailAnniversary {
     return DetailAnniversary(
         eventId = eventId,
         title = title,
-        lunarDate = this.lunarDate.toCalendarFormat(),
-        solarDate = this.solarDate.toCalendarFormat(),
+        lunarDate = this.lunarDate.toCalendarFormat(SimpleDateFormat("yyyy-MM-dd")),
+        solarDate = this.solarDate.toCalendarFormat(SimpleDateFormat("yyyy-MM-dd")),
         alarmSchedule = this.alarmSchedule.map { AlarmSchedule.valueOf(it) },
         content = content,
         type = AnniversaryDateType.valueOf(type),

@@ -2,6 +2,8 @@ package nexters.hyomk.data.model.request
 
 import com.google.gson.annotations.SerializedName
 import nexters.hyomk.domain.model.CreateAnniversary
+import nexters.hyomk.domain.utils.toFormatString
+import java.text.SimpleDateFormat
 
 data class CreateAnniversaryDTO(
     @SerializedName("title")
@@ -19,7 +21,7 @@ data class CreateAnniversaryDTO(
 fun CreateAnniversary.toRequestDTO(): CreateAnniversaryDTO {
     return CreateAnniversaryDTO(
         title = this.title,
-        date = this.date.toString(),
+        date = this.date.toFormatString(SimpleDateFormat("yyyy-MM-dd")),
         type = this.type.value,
         alarmSchedule = this.alarmSchedule.map { it.value },
         content = this.content,
