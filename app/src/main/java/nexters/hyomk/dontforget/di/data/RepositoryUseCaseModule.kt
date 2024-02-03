@@ -8,6 +8,7 @@ import nexters.hyomk.domain.usecaseImpl.AddAnniversaryUseCaseImpl
 import nexters.hyomk.domain.usecaseImpl.DeleteAnniversaryUseCaseImpl
 import nexters.hyomk.domain.usecaseImpl.GetAnniversaryListUseCaseImpl
 import nexters.hyomk.domain.usecaseImpl.GetDetailAnniversaryUseCaseImpl
+import nexters.hyomk.domain.usecaseImpl.GetDeviceInfoUseCaseImpl
 import nexters.hyomk.domain.usecaseImpl.ModifyAnniversaryUseCaseImpl
 import nexters.hyomk.domain.usecaseImpl.UpdateDeviceInfoUseCaseImpl
 import javax.inject.Singleton
@@ -25,6 +26,12 @@ object RepositoryUseCaseModule {
     @Singleton
     fun provideUpdateDeviceInfoCaseImpl(deviceInfoRepository: DeviceInfoRepository): UpdateDeviceInfoUseCaseImpl {
         return UpdateDeviceInfoUseCaseImpl(deviceInfoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeviceInfoCaseImpl(deviceInfoRepository: DeviceInfoRepository): GetDeviceInfoUseCaseImpl {
+        return GetDeviceInfoUseCaseImpl(deviceInfoRepository)
     }
 
     @Provides

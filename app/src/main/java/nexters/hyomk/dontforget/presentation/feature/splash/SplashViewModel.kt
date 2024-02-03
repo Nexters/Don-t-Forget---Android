@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    @ApplicationContext private val application: Application,
+    private val application: Application,
     private val updateDeviceInfoUseCase: UpdateDeviceInfoUseCase,
     private val getDeviceInfoUseCase: GetDeviceInfoUseCase,
 ) : AndroidViewModel(application) {
