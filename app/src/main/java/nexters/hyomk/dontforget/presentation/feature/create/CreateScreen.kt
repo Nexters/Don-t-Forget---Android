@@ -42,13 +42,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
@@ -83,9 +87,7 @@ fun CreateScreen(
     val today = LocalDateTime.now()
 
     val year by remember { mutableStateOf(PickerState(today.year)) }
-
     val month by remember { mutableStateOf(PickerState(today.monthValue)) }
-
     val day by remember { mutableStateOf(PickerState(today.dayOfMonth)) }
 
     val guide = GuideCompositionLocal.current
@@ -93,11 +95,29 @@ fun CreateScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-
     val (scrollEnabled, setScrollEnabled) = remember {
         mutableStateOf(true)
     }
     val focusManager = LocalFocusManager.current
+    val lifecycle = LocalLifecycleOwner.current
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.events.collectLatest {
+                when (it) {
+                    is CreateEvent.Fail -> {
+                    }
+
+                    is CreateEvent.Loading -> {
+                    }
+
+                    is CreateEvent.Success -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
+        }
+    }
 
     if (showDialog) {
         Dialog(onDismissRequest = {}) {
@@ -169,6 +189,7 @@ fun CreateScreen(
                             text = guide.complete,
                             shape = RoundedCornerShape(12.dp),
                             onClick = {
+                                viewModel.onClickSubmit(year.selectedItem, month.selectedItem, day.selectedItem)
                             },
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -232,8 +253,6 @@ fun CreateScreen(
                         modifier = Modifier.weight(1f).padding(bottom = 80.dp),
                     )
                 }
-
-                //
             }
         }
     }
@@ -273,9 +292,7 @@ fun AnniversaryDatePicker(
     val today = LocalDateTime.now()
 
     var yInit by remember { mutableIntStateOf(today.year) }
-
     var mInit by remember { mutableIntStateOf(today.monthValue) }
-
     var dInit by remember { mutableIntStateOf(today.dayOfMonth) }
 
     fun convertDate(type: AnniversaryDateType) {
@@ -323,6 +340,21 @@ fun AnniversaryDatePicker(
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
+    Box(modifier = modifier.padding(vertical = 32.dp)) {
+        CustomDateTab(
+            items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
+            selectedItemIndex = selected,
+            onClick = { index ->
+                if (index == 0) {
+                    setType(AnniversaryDateType.Solar)
+                } else {
+                    setType(AnniversaryDateType.Lunar)
+                }
+                setSelected(index)
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 
     Column(
         modifier = Modifier.pointerInput(Unit) {
@@ -338,22 +370,6 @@ fun AnniversaryDatePicker(
             )
         },
     ) {
-        Box(modifier = modifier.padding(vertical = 32.dp)) {
-            CustomDateTab(
-                items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
-                selectedItemIndex = selected,
-                onClick = { index ->
-                    if (index == 0) {
-                        setType(AnniversaryDateType.Solar)
-                    } else {
-                        setType(AnniversaryDateType.Lunar)
-                    }
-                    setSelected(index)
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-
         CustomDatePicker(
             yearPickerState = year,
             monthPickerState = month,
