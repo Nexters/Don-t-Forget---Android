@@ -6,4 +6,5 @@ enum class AlarmSchedule(val value: String) {
     Week("1week"),
     ThreeDay("3day"),
     DDay("dday"),
+    OneDay("oneday")
 }

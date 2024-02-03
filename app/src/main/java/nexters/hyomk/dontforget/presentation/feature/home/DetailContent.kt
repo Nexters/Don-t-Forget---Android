@@ -48,6 +48,7 @@ fun DetailContent(
     navHostController: NavHostController,
     selectedAnniversaryItem: AnniversaryItem?,
     offset: Int = 0,
+    onClickDelete: (Long) -> Unit = {},
 
 ) {
     val type = ATypeCard()
@@ -143,7 +144,12 @@ fun DetailContent(
                                 navHostController.navigate(NavigationItem.Create.route)
                             },
                         )
-                        BaseIconButton(icon = R.drawable.ic_delete, onClick = { })
+                        BaseIconButton(
+                            icon = R.drawable.ic_delete,
+                            onClick = {
+                                onClickDelete(selectedAnniversaryItem.eventId)
+                            },
+                        )
                     }
                 }
             }
