@@ -11,13 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -43,13 +42,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
@@ -84,9 +87,7 @@ fun CreateScreen(
     val today = LocalDateTime.now()
 
     val year by remember { mutableStateOf(PickerState(today.year)) }
-
     val month by remember { mutableStateOf(PickerState(today.monthValue)) }
-
     val day by remember { mutableStateOf(PickerState(today.dayOfMonth)) }
 
     val guide = GuideCompositionLocal.current
@@ -94,12 +95,29 @@ fun CreateScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-
     val (scrollEnabled, setScrollEnabled) = remember {
         mutableStateOf(true)
     }
-
     val focusManager = LocalFocusManager.current
+    val lifecycle = LocalLifecycleOwner.current
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.events.collectLatest {
+                when (it) {
+                    is CreateEvent.Fail -> {
+                    }
+
+                    is CreateEvent.Loading -> {
+                    }
+
+                    is CreateEvent.Success -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
+        }
+    }
 
     if (showDialog) {
         Dialog(onDismissRequest = {}) {
@@ -109,7 +127,10 @@ fun CreateScreen(
                 left = guide.close,
                 right = guide.cancel,
                 onClickLeft = { showDialog = false },
-                onClickRight = { showDialog = false },
+                onClickRight = {
+                    showDialog = false
+                    navHostController.popBackStack()
+                },
             )
         }
     }
@@ -123,17 +144,13 @@ fun CreateScreen(
             .addFocusCleaner(focusManager)
             .imePadding(),
         containerColor = Gray900,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets(0, 0, 0, 20),
 
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
                 title = { Text(text = guide.createTitle, style = MaterialTheme.typography.titleMedium, color = White) },
-                actions = {
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = guide.save, style = MaterialTheme.typography.titleSmall, color = Pink500)
-                    }
-                },
+
                 navigationIcon = {
                     TextButton(
                         onClick = {
@@ -142,7 +159,7 @@ fun CreateScreen(
                     ) {
                         Text(
                             text = guide.cancel,
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.bodySmall,
                             color = Gray600,
                         )
                     }
@@ -154,8 +171,9 @@ fun CreateScreen(
             if (isKeyboardVisible()) {
                 BaseButton(
                     enabled = uiState.name.isNotBlank(),
-                    text = guide.complete,
+                    text = guide.next,
                     onClick = {
+                        focusManager.clearFocus()
                     },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -171,6 +189,7 @@ fun CreateScreen(
                             text = guide.complete,
                             shape = RoundedCornerShape(12.dp),
                             onClick = {
+                                viewModel.onClickSubmit(year.selectedItem, month.selectedItem, day.selectedItem)
                             },
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -180,47 +199,60 @@ fun CreateScreen(
             }
         },
     ) { it ->
-        LazyColumn(
-            state = scrollState,
-            userScrollEnabled = scrollEnabled,
+
+        Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .wrapContentHeight()
                 .padding(it)
                 .padding(20.dp)
                 .consumeWindowInsets(it)
-                .systemBarsPadding(),
+                .navigationBarsPadding()
+                .imePadding(),
+
         ) {
-            item {
-                AnniversaryNameTextField(guide = guide, text = uiState.name, onValueChange = viewModel::updateName)
+            LazyColumn(
+                state = scrollState,
+                userScrollEnabled = scrollEnabled,
+                modifier = Modifier.weight(9f),
+            ) {
+                item {
+                    AnniversaryNameTextField(guide = guide, text = uiState.name, onValueChange = viewModel::updateName)
 
-                AnniversaryDatePicker(
-                    day = day,
-                    month = month,
-                    year = year,
-                    type = uiState.dateType,
-                    setType = viewModel::updateDateType,
-                    Modifier,
-                    guide,
-                    setScrollEnabled,
-                )
+                    AnniversaryDatePicker(
+                        day = day,
+                        month = month,
+                        year = year,
+                        type = uiState.dateType,
+                        setType = viewModel::updateDateType,
+                        Modifier,
+                        guide,
+                        setScrollEnabled,
+                    )
 
-                AnniversaryNotification(
-                    modifier = Modifier.addFocusCleaner(focusManager),
-                    guide = guide,
-                    focusManager = focusManager,
-                    alarms = uiState.alarms,
-                    onClickChip = {
-                        val temp = ArrayList(uiState.alarms)
-                        if (temp.contains(it)) {
-                            temp.remove(it)
-                        } else {
-                            temp.add(it)
-                        }
-                        viewModel.updateAlarmSchedule(temp)
-                    },
-                )
+                    AnniversaryNotification(
+                        modifier = Modifier.addFocusCleaner(focusManager),
+                        guide = guide,
+                        focusManager = focusManager,
+                        alarms = uiState.alarms,
+                        onClickChip = {
+                            val temp = ArrayList(uiState.alarms)
+                            if (temp.contains(it)) {
+                                temp.remove(it)
+                            } else {
+                                temp.add(it)
+                            }
+                            viewModel.updateAlarmSchedule(temp)
+                        },
 
-                AnniversaryMemoTextField(guide = guide, text = uiState.memo, onValueChange = viewModel::updateMemo)
+                    )
+                    AnniversaryMemoTextField(
+                        guide = guide,
+                        text = uiState.memo,
+                        onValueChange = viewModel::updateMemo,
+                        modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                    )
+                }
             }
         }
     }
@@ -231,9 +263,17 @@ fun AnniversaryMemoTextField(
     guide: TransGuide,
     text: String,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Text(text = guide.memoTitle, style = MaterialTheme.typography.titleSmall, color = White, modifier = Modifier.padding(top = 48.dp, bottom = 32.dp))
-    BaseTextField(value = text, onValueChange = onValueChange, hint = guide.memoHint)
+    Column(modifier) {
+        Text(
+            text = guide.memoTitle,
+            style = MaterialTheme.typography.titleSmall,
+            color = White,
+            modifier = Modifier.padding(top = 48.dp, bottom = 32.dp),
+        )
+        BaseTextField(value = text, onValueChange = onValueChange, hint = guide.memoHint)
+    }
 }
 
 @Composable
@@ -252,9 +292,7 @@ fun AnniversaryDatePicker(
     val today = LocalDateTime.now()
 
     var yInit by remember { mutableIntStateOf(today.year) }
-
     var mInit by remember { mutableIntStateOf(today.monthValue) }
-
     var dInit by remember { mutableIntStateOf(today.dayOfMonth) }
 
     fun convertDate(type: AnniversaryDateType) {
@@ -302,6 +340,21 @@ fun AnniversaryDatePicker(
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
+    Box(modifier = modifier.padding(vertical = 32.dp)) {
+        CustomDateTab(
+            items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
+            selectedItemIndex = selected,
+            onClick = { index ->
+                if (index == 0) {
+                    setType(AnniversaryDateType.Solar)
+                } else {
+                    setType(AnniversaryDateType.Lunar)
+                }
+                setSelected(index)
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 
     Column(
         modifier = Modifier.pointerInput(Unit) {
@@ -317,22 +370,6 @@ fun AnniversaryDatePicker(
             )
         },
     ) {
-        Box(modifier = modifier.padding(vertical = 32.dp)) {
-            CustomDateTab(
-                items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
-                selectedItemIndex = selected,
-                onClick = { index ->
-                    if (index == 0) {
-                        setType(AnniversaryDateType.Solar)
-                    } else {
-                        setType(AnniversaryDateType.Lunar)
-                    }
-                    setSelected(index)
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-
         CustomDatePicker(
             yearPickerState = year,
             monthPickerState = month,

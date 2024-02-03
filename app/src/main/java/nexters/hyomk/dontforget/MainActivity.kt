@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import nexters.hyomk.dontforget.ui.language.SupportLanguage
 import nexters.hyomk.dontforget.ui.language.getSupportGuide
 import nexters.hyomk.dontforget.ui.theme.DontForgetTheme
 import nexters.hyomk.dontforget.ui.theme.Gray800
+import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.utils.enumValueOrNull
 import java.util.Locale
 
@@ -38,8 +38,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             DontForgetTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize().background(color = Gray800),
-                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxSize().background(color = Gray900),
+                    color = Gray900,
+                    contentColor = Gray900,
                 ) {
                     CompositionLocalProvider(GuideCompositionLocal.provides(guide)) {
                         AppNavHost(modifier = Modifier.fillMaxSize().background(Gray800), navController = rememberNavController())

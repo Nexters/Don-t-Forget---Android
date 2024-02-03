@@ -1,5 +1,5 @@
 package nexters.hyomk.domain.usecase
 
 interface UpdateDeviceInfoUseCase {
-    suspend fun invoke(deviceId: String)
+    suspend operator fun invoke(deviceId: String)
 }

@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import nexters.hyomk.domain.model.CreateAnniversary
 
 interface AddAnniversaryUseCase {
-    suspend fun invoke(request: CreateAnniversary): Flow<Unit>
+    suspend operator fun invoke(request: CreateAnniversary): Flow<Unit>
 }
