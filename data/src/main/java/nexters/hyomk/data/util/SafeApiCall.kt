@@ -1,7 +1,9 @@
 package nexters.hyomk.data.util
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.Response
 
 object SafeApiCall {
@@ -16,7 +18,7 @@ object SafeApiCall {
                 val errorMessage = response.errorBody()?.string()
                 throw HttpException(code, errorMessage)
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 }
 

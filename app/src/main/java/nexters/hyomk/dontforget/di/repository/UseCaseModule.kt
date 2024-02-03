@@ -4,6 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import nexters.hyomk.domain.repository.AnniversaryRepository
+import nexters.hyomk.domain.repository.DeviceInfoRepository
 import nexters.hyomk.domain.usecase.AddAnniversaryUseCase
 import nexters.hyomk.domain.usecase.DeleteAnniversaryUseCase
 import nexters.hyomk.domain.usecase.GetAnniversaryListUseCase
@@ -71,5 +73,45 @@ class UseCaseModule {
     @Singleton
     fun provideGetDeviceInfoUseCase(useCaseImpl: GetDeviceInfoUseCaseImpl): GetDeviceInfoUseCase {
         return useCaseImpl
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RepositoryUseCaseModule {
+    @Provides
+    @Singleton
+    fun provideGetAnniversaryListUseCaseImpl(anniversaryRepository: AnniversaryRepository): GetAnniversaryListUseCaseImpl {
+        return GetAnniversaryListUseCaseImpl(anniversaryRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateDeviceInfoCaseImpl(deviceInfoRepository: DeviceInfoRepository): UpdateDeviceInfoUseCaseImpl {
+        return UpdateDeviceInfoUseCaseImpl(deviceInfoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCreateAnniversaryCaseImpl(anniversaryRepository: AnniversaryRepository): AddAnniversaryUseCaseImpl {
+        return AddAnniversaryUseCaseImpl(anniversaryRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideModifyAnniversaryCaseImpl(anniversaryRepository: AnniversaryRepository): ModifyAnniversaryUseCaseImpl {
+        return ModifyAnniversaryUseCaseImpl(anniversaryRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetDetailAnniversaryCaseImpl(anniversaryRepository: AnniversaryRepository): GetDetailAnniversaryUseCaseImpl {
+        return GetDetailAnniversaryUseCaseImpl(anniversaryRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteAnniversaryCaseImpl(anniversaryRepository: AnniversaryRepository): DeleteAnniversaryUseCaseImpl {
+        return DeleteAnniversaryUseCaseImpl(anniversaryRepository)
     }
 }
