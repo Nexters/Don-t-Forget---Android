@@ -7,12 +7,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.model.AnniversaryItem
-import java.util.Calendar
+import nexters.hyomk.domain.usecase.DeleteAnniversaryUseCase
+import nexters.hyomk.domain.usecase.GetAnniversaryListUseCase
+import nexters.hyomk.domain.usecase.UpdateDeviceInfoUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+class HomeViewModel @Inject constructor(
+    private val getAnniversaryListUseCase: GetAnniversaryListUseCase,
+    private val updateDeviceUseCase: UpdateDeviceInfoUseCase,
+    private val deleteAnniversaryUseCase: DeleteAnniversaryUseCase,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Empty)
     val uiState get() = _uiState
 
     private val _events = MutableSharedFlow<HomeEvents>()
@@ -20,18 +26,27 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
     suspend fun getAnniversaryList() {
         viewModelScope.launch {
-            val list = List<AnniversaryItem>(20) {
-                AnniversaryItem(
-                    eventId = 1L,
-                    title = "something",
-                    lunarDate = Calendar.getInstance().apply { set(1999, 1, 3) },
-                    solarDate = Calendar.getInstance().apply { set(1999, 3, 3) },
-                )
-            }.mapIndexed { idx, v ->
-                v.copy(title = v.title + "$idx")
-            }
+//            getAnniversaryListUseCase.invoke().catch {
+//                Timber.e("api result fail $it")
+//                _uiState.emit(HomeUiState.Fail)
+//            }.collectLatest {
+//                Timber.d("api result $it")
+//                if (it.isEmpty()) {
+//                    _uiState.emit(HomeUiState.Empty)
+//                } else {
+//                    _uiState.emit(HomeUiState.Success(it))
+//                }
+//            }
+        }
+    }
 
-            _uiState.emit(HomeUiState.Success(list))
+    fun deleteAnniversary(eventId: Long) {
+        viewModelScope.launch {
+//            deleteAnniversaryUseCase.invoke(eventId).catch {
+//                _uiState.emit(HomeUiState.Fail)
+//            }.collectLatest {
+//                getAnniversaryList()
+//            }
         }
     }
 }
@@ -40,9 +55,12 @@ sealed class HomeUiState {
     object Loading : HomeUiState()
     data class Success(val list: List<AnniversaryItem>) : HomeUiState()
     object Fail : HomeUiState()
+
+    object Empty : HomeUiState()
 }
 
 sealed class HomeEvents {
     data class onClickItem(val eventId: Long) : HomeEvents()
     data class onClickEdit(val eventId: Long) : HomeEvents()
+    data class onClicDelete(val eventId: Long) : HomeEvents()
 }

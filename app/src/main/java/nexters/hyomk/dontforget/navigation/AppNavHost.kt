@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nexters.hyomk.dontforget.presentation.feature.create.CreateScreen
-import nexters.hyomk.dontforget.presentation.feature.detail.DetailScreen
 import nexters.hyomk.dontforget.presentation.feature.edit.EditScreen
 import nexters.hyomk.dontforget.presentation.feature.home.HomeScreen
 import nexters.hyomk.dontforget.presentation.feature.splash.SplashScreen
@@ -22,10 +21,9 @@ fun AppNavHost(
         startDestination = startDestination,
     ) {
         composable(NavigationItem.Splash.route) {
-            SplashScreen()
+            SplashScreen(navController)
         }
-        composable(NavigationItem.Home.route) { HomeScreen() }
-        composable(NavigationItem.Detail.route) { DetailScreen() }
+        composable(NavigationItem.Home.route) { HomeScreen(navController) }
         composable(NavigationItem.Create.route) { CreateScreen(modifier, navController) }
         composable(NavigationItem.Edit.route) { EditScreen() }
     }

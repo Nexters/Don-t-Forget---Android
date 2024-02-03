@@ -40,12 +40,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
@@ -93,6 +97,23 @@ fun EditScreen(
         mutableStateOf(true)
     }
     val focusManager = LocalFocusManager.current
+
+    val lifecycle = LocalLifecycleOwner.current
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.events.collectLatest {
+                when (it) {
+                    is ModifyEvent.Fail -> {
+                    }
+
+                    is ModifyEvent.Success -> {
+                        navHostController.popBackStack()
+                    }
+                }
+            }
+        }
+    }
 
     if (showDialog) {
         Dialog(onDismissRequest = {}) {
@@ -164,6 +185,7 @@ fun EditScreen(
                             text = guide.complete,
                             shape = RoundedCornerShape(12.dp),
                             onClick = {
+                                viewModel.onClickSubmit(year = year.selectedItem, month = month.selectedItem, day = day.selectedItem)
                             },
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -422,7 +444,7 @@ fun AnniversaryNotification(
                     },
                     isSelected = alarms.contains(it),
                     modifier = modifier.padding
-                        (end = 8.dp),
+                    (end = 8.dp),
                 )
             }
         }

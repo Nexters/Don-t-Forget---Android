@@ -8,10 +8,12 @@ abstract class TransGuide() {
     abstract val cancel: String
     abstract val check: String
     abstract val close: String
-    abstract val next : String
+    abstract val next: String
 
     abstract val createTitle: String
     abstract val save: String
+
+    abstract val editTitle: String
 
     abstract val anniversaryTitle: String
     abstract val createHint: String
@@ -30,4 +32,10 @@ abstract class TransGuide() {
 
     abstract val createDialogTitle: String
     abstract val createDialogContent: String
+
+    abstract val editDialogContent: String
+    abstract val editDialogTitle: String
+
+    abstract val deleteDialogTitle: String
+    abstract val deleteDialogContent: String
 }
