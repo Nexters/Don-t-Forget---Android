@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.model.AlarmSchedule
+import nexters.hyomk.domain.model.AnniversaryCardType
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.domain.model.CreateAnniversary
 import nexters.hyomk.domain.usecase.AddAnniversaryUseCase
@@ -57,22 +58,23 @@ class CreateViewModel @Inject constructor(
     fun onClickSubmit(year: Int, month: Int, day: Int) {
         viewModelScope.launch {
             _events.emit(CreateEvent.Loading)
-
             with(uiState.value) {
                 addAnniversaryUseCase(
                     CreateAnniversary(
                         title = this.name,
                         date = Calendar.getInstance().apply { set(year, month, day) },
-                        type = this.dateType,
+                        calendarType = this.dateType,
                         alarmSchedule = this.alarms,
                         content = this.memo,
+                        cardType = AnniversaryCardType.values()[(Math.random() * 5).toInt()],
                     ),
+
                 ).catch {
                     _events.emit(CreateEvent.Fail)
                     Timber.e(it)
                 }.collectLatest { res ->
-                    _events.emit(CreateEvent.Fail)
                     Timber.d("[create Anniversary] $res")
+                    _events.emit(CreateEvent.Success)
                 }
             }
         }

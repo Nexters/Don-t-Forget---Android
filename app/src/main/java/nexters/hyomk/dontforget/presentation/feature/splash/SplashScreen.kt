@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,14 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.navigation.NavigationItem
+import nexters.hyomk.dontforget.ui.theme.Gray900
+import timber.log.Timber
 
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,11 +57,12 @@ fun SplashScreen(
     val endLocation = Offset(0F, 0F)
     val coroutine = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(deviceId) {
         visible = true
         coroutine.launch {
             delay(2000)
             visible = false
+            Timber.d("device $deviceId")
             if (deviceId.isNotBlank()) {
                 navHostController.navigate(
                     NavigationItem.Home.route,
@@ -80,8 +84,10 @@ fun SplashScreen(
         exit = fadeOut(),
 
     ) {
-        Scaffold {
-            Column(modifier = Modifier.padding(it).consumeWindowInsets(it)) {
+        Scaffold(
+            containerColor = Gray900,
+        ) {
+            Column(modifier = Modifier.fillMaxSize().consumeWindowInsets(it)) {
                 Image(
                     painter = painterResource(id = R.drawable.bg_full),
                     contentDescription = null,
@@ -93,4 +99,10 @@ fun SplashScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewSplash() {
+    SplashScreen(navHostController = rememberNavController())
 }
