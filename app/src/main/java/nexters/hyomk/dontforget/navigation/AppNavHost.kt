@@ -21,7 +21,7 @@ fun AppNavHost(
         startDestination = startDestination,
     ) {
         composable(NavigationItem.Splash.route) {
-            SplashScreen(navController)
+            SplashScreen(navHostController = navController)
         }
         composable(NavigationItem.Home.route) { HomeScreen(navController) }
         composable(NavigationItem.Create.route) { CreateScreen(modifier, navController) }
