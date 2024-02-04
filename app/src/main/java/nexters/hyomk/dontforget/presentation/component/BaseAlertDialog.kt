@@ -25,6 +25,7 @@ import nexters.hyomk.dontforget.ui.theme.Gray600
 import nexters.hyomk.dontforget.ui.theme.Gray700
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Primary500
+import nexters.hyomk.dontforget.ui.theme.Red500
 import nexters.hyomk.dontforget.ui.theme.White
 
 @Composable
@@ -33,14 +34,18 @@ fun BaseAlertDialog(
     content: String,
     left: String,
     right: String,
+    isWarning: Boolean = false,
     onClickLeft: () -> Unit,
     onClickRight: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.background(
-            color = Gray700,
-            shape = RoundedCornerShape(12.dp),
-        ).width(300.dp).clip(RoundedCornerShape(12.dp)),
+        modifier = Modifier
+            .background(
+                color = Gray700,
+                shape = RoundedCornerShape(12.dp),
+            )
+            .width(300.dp)
+            .clip(RoundedCornerShape(12.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
@@ -48,7 +53,9 @@ fun BaseAlertDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = Modifier.size(56.dp).background(color = Gray500),
+                modifier = Modifier
+                    .size(56.dp)
+                    .background(color = Gray500),
             )
             Text(
                 modifier = Modifier.padding(vertical = 24.dp),
@@ -70,9 +77,12 @@ fun BaseAlertDialog(
         ) {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.width(150.dp).height(51.dp).clickable {
-                    onClickLeft()
-                },
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(51.dp)
+                    .clickable {
+                        onClickLeft()
+                    },
             ) {
                 Text(
                     text = left,
@@ -81,18 +91,25 @@ fun BaseAlertDialog(
             }
             Divider(
                 color = Gray800,
-                modifier = Modifier.height(51.dp).width(1.dp),
+                modifier = Modifier
+                    .height(51.dp)
+                    .width(1.dp),
             )
 
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.width(150.dp).height(51.dp).clickable {
-                    onClickRight()
-                },
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(51.dp)
+                    .clickable {
+                        onClickRight()
+                    },
             ) {
                 Text(
                     text = right,
-                    style = MaterialTheme.typography.bodySmall.copy(color = Primary500),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = if (isWarning) Red500 else Primary500,
+                    ),
                 )
             }
         }
