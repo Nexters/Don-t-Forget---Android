@@ -10,8 +10,10 @@ data class CreateAnniversaryDTO(
     val title: String,
     @SerializedName("date")
     val date: String,
-    @SerializedName("type")
-    val type: String,
+    @SerializedName("calendarType")
+    val calendarType: String,
+    @SerializedName("cardType")
+    val cardType: String,
     @SerializedName("alarmSchedule")
     val alarmSchedule: List<String>,
     @SerializedName("content")
@@ -22,8 +24,9 @@ fun CreateAnniversary.toRequestDTO(): CreateAnniversaryDTO {
     return CreateAnniversaryDTO(
         title = this.title,
         date = this.date.toFormatString(SimpleDateFormat("yyyy-MM-dd")),
-        type = this.type.value,
+        calendarType = this.calendarType.value,
         alarmSchedule = this.alarmSchedule.map { it.value },
         content = this.content,
+        cardType = this.cardType.name,
     )
 }

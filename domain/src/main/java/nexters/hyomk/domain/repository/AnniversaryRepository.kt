@@ -13,9 +13,9 @@ interface AnniversaryRepository {
 
     suspend fun getAnniversary(eventId: Long): Flow<DetailAnniversary>
 
-    suspend fun postAnniversary(@Body request: CreateAnniversary): Flow<Unit>
+    suspend fun postAnniversary(@Body request: CreateAnniversary): Flow<*>
 
-    suspend fun modifyAnniversary(@Path("eventId") request: ModifyAnniversary): Flow<Unit>
+    suspend fun modifyAnniversary(@Path("eventId") eventId: Long, @Body request: ModifyAnniversary): Flow<*>
 
-    suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Flow<Unit>
+    suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Flow<*>
 }

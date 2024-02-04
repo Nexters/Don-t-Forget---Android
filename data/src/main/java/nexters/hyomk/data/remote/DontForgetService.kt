@@ -21,13 +21,13 @@ interface DontForgetService {
     suspend fun getAnniversary(@Path("eventId") eventId: Long): Response<DetailAnniversaryDTO>
 
     @POST("/api/anniversary")
-    suspend fun postAnniversary(@Body request: CreateAnniversaryDTO): Response<Unit>
+    suspend fun postAnniversary(@Body request: CreateAnniversaryDTO): Response<*>
 
     @PUT("/api/anniversary/{eventId}")
-    suspend fun modifyAnniversary(@Path("eventId") request: ModifyAnniversaryDTO): Response<Unit>
+    suspend fun modifyAnniversary(@Path("eventId") eventId: Long, @Body request: ModifyAnniversaryDTO): Response<Void>
 
     @DELETE("/api/anniversary/{eventId}")
-    suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Response<Unit>
+    suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Response<*>
 
     @PUT("/api/device")
     suspend fun modifyAlarmState(): Response<Unit>
