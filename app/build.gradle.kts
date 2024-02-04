@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
 }
 
 val localProperties = gradleLocalProperties(rootDir)
@@ -92,6 +93,12 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-core:${Versions.datastore}")
     implementation("androidx.datastore:datastore-preferences:${Versions.datastore}")
     implementation("io.coil-kt:coil-compose:${Versions.coil}")
+
+    implementation(platform("com.google.firebase:firebase-bom:${Versions.firebase_bom}"))
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-messaging-directboot:${Versions.fcm_direct}")
+    implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
 }
 
 fun getProperty(propertyKey: String): String {

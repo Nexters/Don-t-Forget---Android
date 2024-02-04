@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dont_forget</string>
+    <string name="default_notification_channel_id">챙겨챙겨</string>
 </resources>

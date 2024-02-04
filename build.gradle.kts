@@ -21,6 +21,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10" apply false
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2" apply true
     id("org.jlleitschuh.gradle.ktlint-idea") version "11.3.2" apply true
+    id("com.google.gms.google-services") version "4.3.15" apply false
 }
 
 allprojects {

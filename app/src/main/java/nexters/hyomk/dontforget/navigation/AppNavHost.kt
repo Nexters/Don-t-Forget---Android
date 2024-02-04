@@ -26,7 +26,7 @@ fun AppNavHost(
         startDestination = startDestination,
     ) {
         composable(NavigationItem.Splash.route) {
-            SplashScreen(navController)
+            SplashScreen(navHostController = navController)
         }
         composable(
             route = NavigationItem.Detail.route + "/{eventId}",
