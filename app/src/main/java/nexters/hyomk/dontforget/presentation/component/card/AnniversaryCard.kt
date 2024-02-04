@@ -3,6 +3,7 @@ package nexters.hyomk.dontforget.presentation.component.card
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -21,12 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nexters.hyomk.domain.model.AnniversaryCardType
 import nexters.hyomk.domain.utils.toFormatString
+import nexters.hyomk.dontforget.presentation.utils.conditional
+import nexters.hyomk.dontforget.presentation.utils.createGradientBrush
+import nexters.hyomk.dontforget.ui.theme.Gray700
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import java.util.Calendar
 
@@ -50,11 +56,14 @@ fun AnniversaryCard(
         onClick = onClick,
         modifier = modifier
             .background(Gray900)
-            .clip(RoundedCornerShape(16.dp))
             .aspectRatio(ratio = 1f)
             .graphicsLayer(
                 scaleX = scale.value,
                 scaleY = scale.value,
+            ).border(
+                color = Gray700,
+                width = 1.dp,
+                shape = RoundedCornerShape(16.dp),
             ),
         shape = RoundedCornerShape(16.dp),
 
@@ -62,7 +71,16 @@ fun AnniversaryCard(
         Image(
             painter = painterResource(id = properties.background),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(properties.backgroundColor)
+                .conditional(
+                    properties.type == AnniversaryCardType.LUNAR,
+                ) {
+                    background(createGradientBrush(listOf(Color(0xFF181E23), Color(0xFF1E2830)), true))
+                }.clip(
+                    shape = RoundedCornerShape(16.dp),
+                ),
         )
         Column(
             modifier.padding(end = 20.dp, start = 20.dp, bottom = 20.dp, top = 24.dp),
@@ -74,7 +92,7 @@ fun AnniversaryCard(
                 style = MaterialTheme.typography.headlineSmall.copy(color = properties.titleColor),
             )
             Text(
-                text = "D$dday",
+                text = if (dday == 365L) "D-DAY" else "D$dday",
                 modifier = Modifier.padding(top = 4.dp),
                 style = MaterialTheme.typography.titleMedium.copy(color = properties.dDayColor),
             )
@@ -98,7 +116,7 @@ fun PreviewAnniversaryCard() {
     calendar2.set(2024, 1, 24)
 
     AnniversaryCard(
-        properties = ATypeCard(),
+        properties = BTypeCard(),
         title = "생일이다",
     )
 }

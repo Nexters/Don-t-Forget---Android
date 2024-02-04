@@ -1,6 +1,7 @@
 package nexters.hyomk.dontforget.presentation.component.card
 
 import androidx.compose.ui.graphics.Color
+import nexters.hyomk.domain.model.AnniversaryCardType
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray50
@@ -13,7 +14,7 @@ import nexters.hyomk.dontforget.ui.theme.White
 import nexters.hyomk.dontforget.ui.theme.Yellow500
 
 abstract class CardProperties() {
-    abstract val type: CardType
+    abstract val type: AnniversaryCardType
     abstract val titleColor: Color
     abstract val dDayColor: Color
     abstract val dateColor: Color
@@ -22,17 +23,17 @@ abstract class CardProperties() {
 }
 
 data class ATypeCard(
-    override val type: CardType = CardType.A,
+    override val type: AnniversaryCardType = AnniversaryCardType.LUNAR,
     override val titleColor: Color = Gray400,
     override val dDayColor: Color = Primary600,
     override val dateColor: Color = Gray600,
     override val background: Int = R.drawable.bg_type_a,
-    override val backgroundColor: Color = Color(0XFFF81E23),
+    override val backgroundColor: Color = Color(0XFF81E23),
 
 ) : CardProperties()
 
 data class BTypeCard(
-    override val type: CardType = CardType.B,
+    override val type: AnniversaryCardType = AnniversaryCardType.FACE,
     override val titleColor: Color = Gray900,
     override val dDayColor: Color = Primary600,
     override val dateColor: Color = Primary700,
@@ -41,7 +42,7 @@ data class BTypeCard(
 ) : CardProperties()
 
 data class CTypeCard(
-    override val type: CardType = CardType.C,
+    override val type: AnniversaryCardType = AnniversaryCardType.ARM,
     override val titleColor: Color = White,
     override val dDayColor: Color = White,
     override val dateColor: Color = White,
@@ -50,7 +51,7 @@ data class CTypeCard(
 ) : CardProperties()
 
 data class DTypeCard(
-    override val type: CardType = CardType.D,
+    override val type: AnniversaryCardType = AnniversaryCardType.TAIL,
     override val titleColor: Color = Gray50,
     override val dDayColor: Color = Yellow500,
     override val dateColor: Color = White,
@@ -61,7 +62,7 @@ data class DTypeCard(
 ) : CardProperties()
 
 data class ETypeCard(
-    override val type: CardType = CardType.E,
+    override val type: AnniversaryCardType = AnniversaryCardType.FOREST,
     override val titleColor: Color = Gray50,
     override val dDayColor: Color = Primary600,
     override val dateColor: Color = White,
@@ -70,3 +71,13 @@ data class ETypeCard(
         0XFF181E23,
     ),
 ) : CardProperties()
+
+fun getCardProperties(type: AnniversaryCardType): CardProperties {
+    return when (type) {
+        AnniversaryCardType.LUNAR -> ATypeCard()
+        AnniversaryCardType.FACE -> BTypeCard()
+        AnniversaryCardType.ARM -> CTypeCard()
+        AnniversaryCardType.TAIL -> DTypeCard()
+        AnniversaryCardType.FOREST -> ETypeCard()
+    }
+}
