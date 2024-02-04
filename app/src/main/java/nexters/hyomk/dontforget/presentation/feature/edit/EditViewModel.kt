@@ -5,11 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
+import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.domain.model.ModifyAnniversary
 import nexters.hyomk.domain.usecase.GetDetailAnniversaryUseCase
 import nexters.hyomk.domain.usecase.ModifyAnniversaryUserCase
@@ -36,22 +35,19 @@ class EditViewModel @Inject constructor(
     var _day = 0
     var _month = 0
 
-    suspend fun getAnniversaryDetail(eventId: Long) {
+    suspend fun initAnniversaryDetail(anniversary: DetailAnniversary) {
         viewModelScope.launch {
-            getDetailAnniversaryUseCase.invoke(eventId).catch {
-            }.collectLatest {
-                _uiState.emit(
-                    EditUiState.Success(
-                        eventId = eventId,
-                        title = it.title,
-                        solarDate = Calendar.getInstance().apply { set(2024, 1, 1) },
-                        lunarDate = Calendar.getInstance().apply { set(2024, 2, 4) },
-                        content = "선물주세요",
-                        type = AnniversaryDateType.Solar,
-                        alarmSchedule = listOf(AlarmSchedule.DDay),
-                    ),
-                )
-            }
+            _uiState.emit(
+                EditUiState.Success(
+                    eventId = anniversary.eventId,
+                    title = anniversary.title,
+                    solarDate = anniversary.solarDate,
+                    lunarDate = anniversary.lunarDate,
+                    content = anniversary.content,
+                    type = AnniversaryDateType.Solar,
+                    alarmSchedule = anniversary.alarmSchedule,
+                ),
+            )
         }
     }
 
@@ -91,24 +87,25 @@ class EditViewModel @Inject constructor(
         Timber.d(uiState.value.toString())
         if (uiState.value is EditUiState.Success) {
             viewModelScope.launch {
-                _uiState.emit(EditUiState.Loading)
                 val state = (uiState.value as EditUiState.Success)
-                updateAnniversaryUseCase.invoke(
-                    ModifyAnniversary(
-                        title = state.title,
-                        date = Calendar.getInstance().apply {
-                            set(year, month, day)
-                        },
-                        type = state.type,
-                        alarmSchedule = state.alarmSchedule,
-                        content = state.content,
+                runCatching {
+                    updateAnniversaryUseCase.invoke(
+                        eventId = state.eventId,
+                        request = ModifyAnniversary(
+                            title = state.title,
+                            date = Calendar.getInstance().apply {
+                                set(year, month, day)
+                            },
+                            type = state.type,
+                            alarmSchedule = state.alarmSchedule,
+                            content = state.content,
 
-                    ),
-                ).catch {
+                        ),
+                    )
+                }.onFailure {
                     _events.emit(ModifyEvent.Fail)
                     Timber.e(it)
-                }.collectLatest {
-                    _uiState.emit(state)
+                }.onSuccess {
                     _events.emit(ModifyEvent.Success)
                 }
             }
