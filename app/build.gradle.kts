@@ -93,6 +93,4 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-messaging-directboot:${Versions.fcm_direct}")
     implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
-
-
 }
