@@ -5,9 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateOffsetAsState
@@ -56,7 +54,6 @@ import nexters.hyomk.dontforget.navigation.NavigationItem
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.ui.theme.Gray900
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
