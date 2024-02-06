@@ -29,6 +29,8 @@ class SplashViewModel @Inject constructor(
                         updateDeviceInfoUseCase(it ?: "")
                         _deviceId.emit(it ?: "")
                     }
+                } else {
+                    _deviceId.emit(deviceId)
                 }
             }
         }

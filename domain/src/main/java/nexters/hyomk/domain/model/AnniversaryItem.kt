@@ -7,4 +7,5 @@ data class AnniversaryItem(
     val title: String,
     val lunarDate: Calendar,
     val solarDate: Calendar,
+    val cardType: AnniversaryCardType,
 )

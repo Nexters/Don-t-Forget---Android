@@ -52,6 +52,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
+import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.presentation.component.BaseButton
 import nexters.hyomk.dontforget.presentation.component.BaseChip
@@ -60,6 +61,7 @@ import nexters.hyomk.dontforget.presentation.component.CustomDatePicker
 import nexters.hyomk.dontforget.presentation.component.CustomDateTab
 import nexters.hyomk.dontforget.presentation.component.PickerState
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
+import nexters.hyomk.dontforget.presentation.feature.create.AnniversaryMemoTextField
 import nexters.hyomk.dontforget.presentation.utils.LunarCalendarUtil
 import nexters.hyomk.dontforget.presentation.utils.addFocusCleaner
 import nexters.hyomk.dontforget.presentation.utils.isKeyboardVisible
@@ -74,18 +76,19 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditScreen(
+    anniversary: DetailAnniversary,
     navHostController: NavHostController = rememberNavController(),
     viewModel: EditViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val today = LocalDateTime.now()
+    val target = LocalDateTime.ofInstant(anniversary.solarDate.toInstant(), anniversary.solarDate.timeZone.toZoneId())
 
-    val year by remember { mutableStateOf(PickerState(today.year)) }
+    val year by remember { mutableStateOf(PickerState(target.year)) }
 
-    val month by remember { mutableStateOf(PickerState(today.monthValue)) }
+    val month by remember { mutableStateOf(PickerState(target.monthValue)) }
 
-    val day by remember { mutableStateOf(PickerState(today.dayOfMonth)) }
+    val day by remember { mutableStateOf(PickerState(target.dayOfMonth)) }
 
     val guide = GuideCompositionLocal.current
 
@@ -101,6 +104,7 @@ fun EditScreen(
     val lifecycle = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
+        viewModel.initAnniversaryDetail(anniversary)
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.events.collectLatest {
                 when (it) {
@@ -145,7 +149,7 @@ fun EditScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
-                title = { Text(text = guide.createTitle, style = MaterialTheme.typography.titleMedium, color = White) },
+                title = { Text(text = guide.editTitle, style = MaterialTheme.typography.titleMedium, color = White) },
 
                 navigationIcon = {
                     TextButton(
@@ -235,7 +239,7 @@ fun EditScreen(
                                     setScrollEnabled,
                                 )
 
-                                nexters.hyomk.dontforget.presentation.feature.create.AnniversaryNotification(
+                                AnniversaryNotification(
                                     modifier = Modifier.addFocusCleaner(focusManager),
                                     guide = guide,
                                     focusManager = focusManager,
@@ -267,24 +271,6 @@ fun EditScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun AnniversaryMemoTextField(
-    guide: TransGuide,
-    text: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier) {
-        Text(
-            text = guide.memoTitle,
-            style = MaterialTheme.typography.titleSmall,
-            color = White,
-            modifier = Modifier.padding(top = 48.dp, bottom = 32.dp),
-        )
-        BaseTextField(value = text, onValueChange = onValueChange, hint = guide.memoHint)
     }
 }
 
@@ -443,8 +429,7 @@ fun AnniversaryNotification(
                         focusManager.clearFocus()
                     },
                     isSelected = alarms.contains(it),
-                    modifier = modifier.padding
-                    (end = 8.dp),
+                    modifier = modifier.padding(end = 8.dp),
                 )
             }
         }

@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,6 +7,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
 }
+
+val localProperties = gradleLocalProperties(rootDir)
 
 android {
     namespace = "nexters.hyomk.dontforget"
@@ -21,6 +25,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"${getProperty("BASE_URL")}\"")
     }
 
     buildTypes {
@@ -93,4 +99,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-messaging-directboot:${Versions.fcm_direct}")
     implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
+}
+
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
 }

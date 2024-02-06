@@ -9,5 +9,5 @@ import javax.inject.Inject
 class AddAnniversaryUseCaseImpl @Inject constructor(
     private val anniversaryRepository: AnniversaryRepository,
 ) : AddAnniversaryUseCase {
-    override suspend fun invoke(request: CreateAnniversary): Flow<Unit> = anniversaryRepository.postAnniversary(request)
+    override suspend fun invoke(request: CreateAnniversary): Flow<*> = anniversaryRepository.postAnniversary(request)
 }

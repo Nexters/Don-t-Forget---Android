@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,6 +52,7 @@ import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.navigation.NavigationItem
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
+import nexters.hyomk.dontforget.ui.theme.Gray900
 
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -91,7 +91,8 @@ fun SplashScreen(
                     navHostController.navigate(
                         NavigationItem.Home.route,
                     ) {
-                        popUpTo(NavigationItem.Splash.route)
+                        launchSingleTop = true
+                        popUpTo(NavigationItem.Splash.route) { inclusive = true }
                     }
                 }
             }
@@ -134,10 +135,11 @@ fun SplashScreen(
         exit = fadeOut(),
 
     ) {
-        Scaffold {
+        Scaffold(
+            containerColor = Gray900,
+        ) {
             Column(
                 modifier = Modifier
-                    .padding(it)
                     .consumeWindowInsets(it),
             ) {
                 Image(

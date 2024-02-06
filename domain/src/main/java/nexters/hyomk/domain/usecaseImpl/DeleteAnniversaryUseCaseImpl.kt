@@ -8,5 +8,5 @@ import javax.inject.Inject
 class DeleteAnniversaryUseCaseImpl @Inject constructor(
     private val anniversaryRepository: AnniversaryRepository,
 ) : DeleteAnniversaryUseCase {
-    override suspend fun invoke(eventId: Long): Flow<Unit> = anniversaryRepository.deleteAnniversary(eventId)
+    override suspend fun invoke(eventId: Long): Flow<*> = anniversaryRepository.deleteAnniversary(eventId)
 }
