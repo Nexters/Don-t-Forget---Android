@@ -20,6 +20,14 @@ jobs:
 
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
+            
+            - name: BASE_URL
+              run: |
+                echo BASE_URL=\"$BASE_URL\" > local.properties
+              shell: bash
+              env:
+                 API_KEY: ${{ secrets.BASE_URL }}
+
 
             - name: Ktlint Check
               run: ./gradlew --no-daemon ktlintCheck --continue
