@@ -9,7 +9,7 @@ abstract class TransGuide() {
     abstract val check: String
     abstract val close: String
     abstract val next: String
-    abstract val delete:String
+    abstract val delete: String
 
     abstract val createTitle: String
     abstract val save: String

@@ -7,7 +7,7 @@ class KorGuide() : TransGuide() {
     override val complete: String = "완료"
     override val close: String = "닫기"
     override val cancel: String = "취소"
-    override val delete: String ="삭제"
+    override val delete: String = "삭제"
     override val anniversaryTitle: String = "기념일 이름"
     override val createTitle: String = "기념일 만들기"
     override val save: String = "저장"
