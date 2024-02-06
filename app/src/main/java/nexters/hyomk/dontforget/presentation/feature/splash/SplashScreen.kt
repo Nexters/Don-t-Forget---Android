@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateOffsetAsState
@@ -35,7 +37,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.app.ActivityCompat
@@ -53,7 +54,9 @@ import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.navigation.NavigationItem
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
+import nexters.hyomk.dontforget.ui.theme.Gray900
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -91,7 +94,8 @@ fun SplashScreen(
                     navHostController.navigate(
                         NavigationItem.Home.route,
                     ) {
-                        popUpTo(NavigationItem.Splash.route)
+                        launchSingleTop = true
+                        popUpTo(NavigationItem.Splash.route) { inclusive = true }
                     }
                 }
             }
@@ -134,10 +138,11 @@ fun SplashScreen(
         exit = fadeOut(),
 
     ) {
-        Scaffold {
+        Scaffold(
+            containerColor = Gray900,
+        ) {
             Column(
                 modifier = Modifier
-                    .padding(it)
                     .consumeWindowInsets(it),
             ) {
                 Image(
