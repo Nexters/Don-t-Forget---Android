@@ -10,17 +10,17 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_app"
+        android:icon="@drawable/ic_launcher_app"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Dont_forget"
+        android:theme="@style/Theme.App.Starting"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_app" />
+            android:resource="@drawable/ic_push" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -30,19 +30,24 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/white" />
 
-
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Dont_forget"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Dont_forget"
+            android:windowSoftInputMode="adjustResize"></activity>
+
         <service
             android:name="nexters.hyomk.dontforget.fcm.MyFirebaseMessageService"
             android:directBootAware="true"
