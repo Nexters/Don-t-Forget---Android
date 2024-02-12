@@ -291,24 +291,28 @@ fun LoadingContent() {
     Scaffold(
         containerColor = Gray900,
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .consumeWindowInsets(it)
-                .imePadding(),
-            contentAlignment = Alignment.BottomCenter,
+                .consumeWindowInsets(it),
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.bg_full),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
                     .fillMaxSize(),
-                alignment = BiasAlignment(0f, 1f),
-                contentScale = ContentScale.FillWidth,
-            )
-        }
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = Gray400.copy(alpha = 0.6f), strokeWidth = 4.dp)
+
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.bg_full),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    alignment = BiasAlignment(0f, 1f),
+                    contentScale = ContentScale.FillWidth,
+                )
+            }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Gray400.copy(alpha = 0.6f), strokeWidth = 4.dp)
+            }
         }
     }
 }
@@ -321,7 +325,10 @@ fun EmptyContent(
     navHostController: NavHostController,
     size: Int,
 ) {
-    Scaffold() {
+    Scaffold(
+        containerColor = Gray900,
+        modifier = Modifier.background(Gray900),
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
