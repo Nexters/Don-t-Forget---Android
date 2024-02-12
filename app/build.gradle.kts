@@ -29,13 +29,28 @@ android {
         buildConfigField("String", "BASE_URL", "\"${getProperty("BASE_URL")}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = (file(getProperty("STORE_FILE")))
+            storePassword = (getProperty("KEY_PASSWORD"))
+            keyAlias = (getProperty("KEY_ALIAS"))
+            keyPassword = (getProperty("STORE_PASSWORD"))
+        }
+    }
+
     buildTypes {
         release {
+            isDebuggable = false
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -101,7 +116,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
     implementation("androidx.core:core-splashscreen:${Versions.splash}")
     implementation("com.airbnb.android:lottie-compose:${Versions.lottie}")
-
 }
 
 fun getProperty(propertyKey: String): String {
