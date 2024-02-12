@@ -45,7 +45,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.utils.calculateDDay
@@ -156,8 +155,7 @@ fun DetailScreen(
                                     BaseIconButton(
                                         icon = R.drawable.ic_edit,
                                         onClick = {
-                                            val anniversaryJson = Gson().toJson(data)
-                                            navHostController.navigate(route = NavigationItem.Edit.route + "/$anniversaryJson")
+                                            navHostController.navigate(route = NavigationItem.Edit.route + "/${data.eventId}")
                                         },
                                     )
                                     BaseIconButton(

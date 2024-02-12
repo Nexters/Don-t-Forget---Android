@@ -24,7 +24,7 @@ fun CreateAnniversary.toRequestDTO(): CreateAnniversaryDTO {
     return CreateAnniversaryDTO(
         title = this.title,
         date = this.date.toFormatString(SimpleDateFormat("yyyy-MM-dd")),
-        calendarType = this.calendarType.value,
+        calendarType = this.calendarType.name,
         alarmSchedule = this.alarmSchedule.map { it.value },
         content = this.content,
         cardType = this.cardType.name,

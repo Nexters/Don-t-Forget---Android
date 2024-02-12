@@ -85,8 +85,6 @@ fun CreateScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val today = LocalDateTime.now()
-
     val year by remember { mutableStateOf(PickerState(1980)) }
     val month by remember { mutableStateOf(PickerState(1)) }
     val day by remember { mutableStateOf(PickerState(1)) }
@@ -295,9 +293,9 @@ fun AnniversaryDatePicker(
 
     val today = LocalDateTime.now()
 
-    var yInit by remember { mutableIntStateOf(today.year) }
-    var mInit by remember { mutableIntStateOf(today.monthValue) }
-    var dInit by remember { mutableIntStateOf(today.dayOfMonth) }
+    var yInit by remember { mutableIntStateOf(1980) }
+    var mInit by remember { mutableIntStateOf(1) }
+    var dInit by remember { mutableIntStateOf(1) }
 
     fun convertDate(type: AnniversaryDateType) {
         try {
@@ -433,7 +431,7 @@ fun AnniversaryNotification(
                     },
                     isSelected = alarms.contains(it),
                     modifier = modifier.padding
-                    (end = 8.dp),
+                        (end = 8.dp),
                 )
             }
         }

@@ -7,8 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.gson.Gson
-import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.dontforget.presentation.feature.create.CreateScreen
 import nexters.hyomk.dontforget.presentation.feature.detail.DetailScreen
 import nexters.hyomk.dontforget.presentation.feature.edit.EditScreen
@@ -43,19 +41,18 @@ fun AppNavHost(
         composable(NavigationItem.Home.route) { HomeScreen(navController) }
         composable(NavigationItem.Create.route) { CreateScreen(modifier, navController) }
         composable(
-            route = NavigationItem.Edit.route + "/{anniversary}",
+            route = NavigationItem.Edit.route + "/{eventId}",
             arguments = listOf(
-                navArgument("anniversary") {
-                    type = NavType.StringType
-                    defaultValue = ""
+                navArgument("eventId") {
+                    type = NavType.LongType
+                    defaultValue = -1L
                 },
             ),
         ) { navBackStackEntry ->
-            val anniversaryDataJson = navBackStackEntry.arguments?.getString("anniversary")
-            val anniversary = Gson().fromJson<DetailAnniversary>(anniversaryDataJson, DetailAnniversary::class.java)
+            val eventId = navBackStackEntry.arguments?.getLong("eventId")
             EditScreen(
-                anniversary = anniversary,
                 navHostController = navController,
+                eventId = eventId ?: -1L,
             )
         }
     }

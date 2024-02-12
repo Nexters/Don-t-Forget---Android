@@ -62,7 +62,7 @@ class CreateViewModel @Inject constructor(
                 addAnniversaryUseCase(
                     CreateAnniversary(
                         title = this.name,
-                        date = Calendar.getInstance().apply { set(year, month, day) },
+                        date = Calendar.getInstance().apply { set(year, month - 1, day) },
                         calendarType = this.dateType,
                         alarmSchedule = this.alarms,
                         content = this.memo,

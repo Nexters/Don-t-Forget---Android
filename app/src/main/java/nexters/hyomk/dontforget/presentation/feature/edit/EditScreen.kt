@@ -52,7 +52,6 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
-import nexters.hyomk.domain.model.DetailAnniversary
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.presentation.component.BaseButton
@@ -77,19 +76,19 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditScreen(
-    anniversary: DetailAnniversary,
+    eventId: Long,
     navHostController: NavHostController = rememberNavController(),
     viewModel: EditViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val target = LocalDateTime.ofInstant(anniversary.solarDate.toInstant(), anniversary.solarDate.timeZone.toZoneId())
+    var target by remember { mutableStateOf(LocalDateTime.now()) }
 
-    val year by remember { mutableStateOf(PickerState(target.year)) }
+    var year by remember { mutableStateOf(PickerState(target.year)) }
 
-    val month by remember { mutableStateOf(PickerState(target.monthValue)) }
+    var month by remember { mutableStateOf(PickerState(target.monthValue)) }
 
-    val day by remember { mutableStateOf(PickerState(target.dayOfMonth)) }
+    var day by remember { mutableStateOf(PickerState(target.dayOfMonth)) }
 
     val guide = GuideCompositionLocal.current
 
@@ -104,8 +103,19 @@ fun EditScreen(
 
     val lifecycle = LocalLifecycleOwner.current
 
+    LaunchedEffect(uiState) {
+        Timber.w("uisate update $uiState")
+        if (uiState is EditUiState.Success) {
+            target = LocalDateTime.ofInstant(
+                (uiState as EditUiState.Success).baseDate.toInstant(),
+                (uiState as EditUiState.Success).baseDate.timeZone.toZoneId(),
+
+            )
+        }
+    }
+
     LaunchedEffect(Unit) {
-        viewModel.initAnniversaryDetail(anniversary)
+        viewModel.getDetailAnniversary(eventId)
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.events.collectLatest {
                 when (it) {
@@ -211,6 +221,12 @@ fun EditScreen(
 
             is EditUiState.Success -> {
                 with(uiState as EditUiState.Success) {
+                    val base = remember {
+                        mutableStateOf(
+                            LocalDateTime.ofInstant(this@with.baseDate.toInstant(), this@with.baseDate.timeZone.toZoneId()),
+                        )
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -236,9 +252,10 @@ fun EditScreen(
                                     year = year,
                                     type = this@with.type,
                                     setType = viewModel::updateDateType,
-                                    Modifier,
-                                    guide,
-                                    setScrollEnabled,
+                                    modifier = Modifier,
+                                    guide = guide,
+                                    setScrollEnabled = setScrollEnabled,
+                                    baseDate = target,
                                 )
 
                                 AnniversaryNotification(
@@ -281,21 +298,20 @@ fun AnniversaryDatePicker(
     day: PickerState,
     month: PickerState,
     year: PickerState,
+    baseDate: LocalDateTime,
     type: AnniversaryDateType,
     setType: (AnniversaryDateType) -> Unit,
     modifier: Modifier,
     guide: TransGuide,
     setScrollEnabled: (Boolean) -> Unit,
 ) {
-    val (selected, setSelected) = remember { mutableStateOf(0) }
+    val (selected, setSelected) = remember { mutableStateOf(if (type == AnniversaryDateType.SOLAR) 0 else 1) }
 
-    val today = LocalDateTime.now()
+    var yInit by remember { mutableIntStateOf(baseDate.year) }
 
-    var yInit by remember { mutableIntStateOf(today.year) }
+    var mInit by remember { mutableIntStateOf(baseDate.monthValue) }
 
-    var mInit by remember { mutableIntStateOf(today.monthValue) }
-
-    var dInit by remember { mutableIntStateOf(today.dayOfMonth) }
+    var dInit by remember { mutableIntStateOf(baseDate.dayOfMonth) }
 
     fun convertDate(type: AnniversaryDateType) {
         try {
@@ -336,6 +352,18 @@ fun AnniversaryDatePicker(
     LaunchedEffect(type.value) {
         Timber.d("$type")
         convertDate(type)
+    }
+
+    LaunchedEffect(baseDate.year, baseDate.month, baseDate.dayOfMonth) {
+        Timber.d("baseDate from $baseDate")
+
+        year.selectedItem = baseDate.year
+        month.selectedItem = baseDate.monthValue
+        day.selectedItem = baseDate.dayOfMonth
+
+        yInit = baseDate.year
+        mInit = baseDate.monthValue
+        dInit = baseDate.dayOfMonth
     }
 
     Row(modifier = Modifier.padding(top = 48.dp)) {

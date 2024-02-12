@@ -23,7 +23,7 @@ fun ModifyAnniversary.toRequestDTO(): ModifyAnniversaryDTO {
     return ModifyAnniversaryDTO(
         title = this.title,
         date = this.date.toFormatString(SimpleDateFormat("yyyy-MM-dd")),
-        type = this.type.value,
+        type = this.type.name,
         alarmSchedule = this.alarmSchedule.map { it.value },
         content = this.content,
     )

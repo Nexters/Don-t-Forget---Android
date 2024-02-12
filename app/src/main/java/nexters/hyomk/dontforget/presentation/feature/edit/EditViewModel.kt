@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import nexters.hyomk.data.util.HttpException
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.domain.model.DetailAnniversary
@@ -30,10 +33,32 @@ class EditViewModel @Inject constructor(
 
     private val _events = MutableSharedFlow<ModifyEvent>()
     val events get() = _events
-
-    var _year = 0
-    var _day = 0
-    var _month = 0
+    fun getDetailAnniversary(eventId: Long) {
+        viewModelScope.launch {
+            _uiState.emit(EditUiState.Loading)
+            getDetailAnniversaryUseCase(eventId).catch {
+                if (it is HttpException) {
+                    Timber.e(it.message)
+                }
+                Timber.e(it.message)
+                _uiState.emit(EditUiState.Fail)
+            }.collectLatest {
+                Timber.d(it.toString())
+                _uiState.emit(
+                    EditUiState.Success(
+                        title = it.title,
+                        eventId = it.eventId,
+                        solarDate = it.solarDate,
+                        lunarDate = it.lunarDate,
+                        content = it.content,
+                        type = it.baseType,
+                        alarmSchedule = it.alarmSchedule,
+                        baseDate = it.baseDate,
+                    ),
+                )
+            }
+        }
+    }
 
     suspend fun initAnniversaryDetail(anniversary: DetailAnniversary) {
         viewModelScope.launch {
@@ -44,8 +69,9 @@ class EditViewModel @Inject constructor(
                     solarDate = anniversary.solarDate,
                     lunarDate = anniversary.lunarDate,
                     content = anniversary.content,
-                    type = AnniversaryDateType.SOLAR,
+                    type = anniversary.baseType,
                     alarmSchedule = anniversary.alarmSchedule,
+                    baseDate = anniversary.baseDate,
                 ),
             )
         }
@@ -77,6 +103,8 @@ class EditViewModel @Inject constructor(
 
     fun updateDateType(type: AnniversaryDateType) {
         if (uiState.value is EditUiState.Success) {
+            Timber.i("type $type")
+
             viewModelScope.launch {
                 _uiState.emit((uiState.value as EditUiState.Success).copy(type = type))
             }
@@ -84,17 +112,17 @@ class EditViewModel @Inject constructor(
     }
 
     fun onClickSubmit(year: Int, month: Int, day: Int) {
-        Timber.d(uiState.value.toString())
         if (uiState.value is EditUiState.Success) {
             viewModelScope.launch {
                 val state = (uiState.value as EditUiState.Success)
+                Timber.d("request : ${state.type} $year/$month/$day")
                 runCatching {
                     updateAnniversaryUseCase.invoke(
                         eventId = state.eventId,
                         request = ModifyAnniversary(
                             title = state.title,
                             date = Calendar.getInstance().apply {
-                                set(year, month, day)
+                                set(year, month - 1, day)
                             },
                             type = state.type,
                             alarmSchedule = state.alarmSchedule,
@@ -123,6 +151,7 @@ sealed class EditUiState {
         val alarmSchedule: List<AlarmSchedule>,
         val content: String,
         val type: AnniversaryDateType,
+        val baseDate: Calendar,
     ) : EditUiState()
 
     object Fail : EditUiState()
