@@ -13,6 +13,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -44,6 +45,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -79,13 +84,26 @@ fun SplashScreen(
         permissions = android.Manifest.permission.POST_NOTIFICATIONS,
     )
 
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.splash_lottie),
+    )
+    val lottieAnimatable = rememberLottieAnimatable()
+
+    LaunchedEffect(Unit) {
+        lottieAnimatable.animate(
+            composition,
+        )
+    }
+
     RequestPermission(
         context = context,
         requestState = permissionRequestState,
         granted = {
             showDialog = false
             coroutine.launch {
-                delay(2000)
+                delay(
+                    4500,
+                )
                 visible = permissionRequestState.requestPermission
                 if (deviceId.isNotBlank()) {
                     navHostController.navigate(
@@ -114,8 +132,8 @@ fun SplashScreen(
     if (showDialog) {
         Dialog(onDismissRequest = {}) {
             BaseAlertDialog(
-                title = "알림 필수",
-                content = "필수다",
+                title = "알림 권한 허용",
+                content = "기념일 리마인드 알림을 받기 위해 \n 알림 권한을 허용해주세요.",
                 left = "앱 종료",
                 right = "허용",
                 onClickLeft = {
@@ -140,20 +158,44 @@ fun SplashScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .consumeWindowInsets(it),
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bg_full),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .offset(splashLocation.x.dp, splashLocation.y.dp),
-                    alignment = BiasAlignment(0f, 1f),
-                    contentScale = ContentScale.FillWidth,
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.bg_splash),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .offset(splashLocation.x.dp, splashLocation.y.dp),
+                        alignment = BiasAlignment(0f, 1f),
+                        contentScale = ContentScale.FillWidth,
+                    )
+
+                    LottieAnimation(
+                        composition,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .offset(splashLocation.x.dp, splashLocation.y.dp),
+                        contentScale = ContentScale.FillWidth,
+                        alignment = BiasAlignment(0f, 1f),
+
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+fun Loader() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_lottie))
+    LottieAnimation(
+        composition,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 fun Context.navigateToAppSettings() {
@@ -188,19 +230,18 @@ fun RequestPermission(
     showRational: () -> Unit,
     permanentlyDenied: () -> Unit,
 ) {
-    val permissionState =
-        rememberPermissionState(permission = requestState.permission) { isGranted ->
-            val permissionPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
-                context as Activity,
-                requestState.permission,
-            ) && !isGranted
+    val permissionState = rememberPermissionState(permission = requestState.permission) { isGranted ->
+        val permissionPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
+            context as Activity,
+            requestState.permission,
+        ) && !isGranted
 
-            if (permissionPermanentlyDenied) {
-                permanentlyDenied()
-            } else if (!isGranted) {
-                showRational()
-            }
+        if (permissionPermanentlyDenied) {
+            permanentlyDenied()
+        } else if (!isGranted) {
+            showRational()
         }
+    }
 
     if (requestState.requestPermission) {
         requestState.requestPermission = false
