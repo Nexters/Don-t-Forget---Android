@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -14,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import nexters.hyomk.dontforget.navigation.AppNavHost
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
+import nexters.hyomk.dontforget.presentation.feature.splash.SplashViewModel
 import nexters.hyomk.dontforget.ui.language.SupportLanguage
 import nexters.hyomk.dontforget.ui.language.getSupportGuide
 import nexters.hyomk.dontforget.ui.theme.DontForgetTheme
@@ -24,6 +26,9 @@ import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viwModel by viewModels<SplashViewModel>()
+
     private val lan: String = Locale.getDefault().language
     private val guide = getSupportGuide(lan.enumValueOrNull<SupportLanguage>())
 
