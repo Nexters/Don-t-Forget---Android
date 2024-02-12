@@ -12,6 +12,7 @@ data class AnniversaryItemDTO(
     @SerializedName("lunarDate") val lunarDate: String,
     @SerializedName("solarDate") val solarDate: String,
     @SerializedName("cardType") val cardType: String,
+
 )
 
 @Suppress("SimpleDateFormat")

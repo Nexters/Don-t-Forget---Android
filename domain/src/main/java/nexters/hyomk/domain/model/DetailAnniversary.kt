@@ -9,4 +9,6 @@ data class DetailAnniversary(
     val solarDate: Calendar,
     val alarmSchedule: List<AlarmSchedule>,
     val content: String,
+    val baseDate: Calendar,
+    val baseType: AnniversaryDateType,
 )
