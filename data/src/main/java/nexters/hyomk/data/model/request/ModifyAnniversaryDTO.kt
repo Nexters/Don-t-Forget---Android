@@ -10,7 +10,7 @@ data class ModifyAnniversaryDTO(
     val title: String,
     @SerializedName("date")
     val date: String,
-    @SerializedName("type")
+    @SerializedName("calendarType")
     val type: String,
     @SerializedName("alarmSchedule")
     val alarmSchedule: List<String>,

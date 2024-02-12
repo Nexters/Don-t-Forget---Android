@@ -53,7 +53,7 @@ fun CustomDatePicker(
 
         LaunchedEffect(yearPickerState.selectedItem, monthPickerState.selectedItem) {
             val newLastDay = getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)
-            Timber.d("lastDay $newLastDay , ${yearPickerState.selectedItem} - ${monthPickerState.selectedItem}")
+            Timber.d("lastDay $newLastDay , ${yearPickerState.selectedItem} - ${monthPickerState.selectedItem} / $yInit - $mInit - $dInit")
             if (lastDay != newLastDay) {
                 lastDay = newLastDay
             }

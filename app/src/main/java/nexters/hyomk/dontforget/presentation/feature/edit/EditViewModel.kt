@@ -116,24 +116,26 @@ class EditViewModel @Inject constructor(
             viewModelScope.launch {
                 val state = (uiState.value as EditUiState.Success)
                 Timber.d("request : ${state.type} $year/$month/$day")
-                runCatching {
-                    updateAnniversaryUseCase.invoke(
-                        eventId = state.eventId,
-                        request = ModifyAnniversary(
-                            title = state.title,
-                            date = Calendar.getInstance().apply {
-                                set(year, month - 1, day)
-                            },
-                            type = state.type,
-                            alarmSchedule = state.alarmSchedule,
-                            content = state.content,
+                updateAnniversaryUseCase.invoke(
+                    eventId = state.eventId,
+                    request = ModifyAnniversary(
+                        title = state.title,
+                        date = Calendar.getInstance().apply {
+                            set(year, month - 1, day)
+                        },
+                        type = state.type,
+                        alarmSchedule = state.alarmSchedule,
+                        content = state.content,
 
-                        ),
-                    )
-                }.onFailure {
-                    _events.emit(ModifyEvent.Fail)
+                    ),
+                ).catch {
                     Timber.e(it)
-                }.onSuccess {
+                    if (it is HttpException && it.code == 400 && state.type == AnniversaryDateType.LUNAR) {
+                        _events.emit(ModifyEvent.Fail("입력하신 음력 날짜는 존재하지 않습니다."))
+                    } else {
+                        _events.emit(ModifyEvent.Fail(""))
+                    }
+                }.collectLatest {
                     _events.emit(ModifyEvent.Success)
                 }
             }
@@ -159,5 +161,5 @@ sealed class EditUiState {
 
 sealed class ModifyEvent {
     object Success : ModifyEvent()
-    object Fail : ModifyEvent()
+    data class Fail(val message: String) : ModifyEvent()
 }

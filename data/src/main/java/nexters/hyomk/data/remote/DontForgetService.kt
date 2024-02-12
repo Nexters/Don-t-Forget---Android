@@ -24,7 +24,7 @@ interface DontForgetService {
     suspend fun postAnniversary(@Body request: CreateAnniversaryDTO): Response<*>
 
     @PUT("/api/anniversary/{eventId}")
-    suspend fun modifyAnniversary(@Path("eventId") eventId: Long, @Body request: ModifyAnniversaryDTO): Response<Void>
+    suspend fun modifyAnniversary(@Path("eventId") eventId: Long, @Body request: ModifyAnniversaryDTO): Response<Unit>
 
     @DELETE("/api/anniversary/{eventId}")
     suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Response<*>

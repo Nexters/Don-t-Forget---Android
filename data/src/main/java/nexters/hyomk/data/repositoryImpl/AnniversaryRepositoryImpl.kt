@@ -30,14 +30,16 @@ class AnniversaryRepositoryImpl @Inject constructor(
     override suspend fun postAnniversary(request: CreateAnniversary): Flow<*> =
         SafeApiCall.call(service.postAnniversary(request.toRequestDTO()))
 
-    override suspend fun modifyAnniversary(eventId: Long, request: ModifyAnniversary): Flow<Void> = SafeApiCall.call(
+    override suspend fun modifyAnniversary(eventId: Long, request: ModifyAnniversary): Flow<*> = SafeApiCall.call(
         service.modifyAnniversary(
             eventId,
             request
                 .toRequestDTO
                 (),
         ),
-    )
+    ).catch {
+        throw it
+    }.map { it }
 
     override suspend fun deleteAnniversary(eventId: Long): Flow<*> = SafeApiCall.call(service.deleteAnniversary(eventId))
 }

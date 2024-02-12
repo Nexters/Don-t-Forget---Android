@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -24,6 +25,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,7 +35,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
@@ -50,6 +54,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.R
@@ -62,6 +67,9 @@ import nexters.hyomk.dontforget.presentation.component.CustomDateTab
 import nexters.hyomk.dontforget.presentation.component.PickerState
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.presentation.feature.create.AnniversaryMemoTextField
+import nexters.hyomk.dontforget.presentation.feature.create.AnniversaryNameTextField
+import nexters.hyomk.dontforget.presentation.feature.create.AnniversaryNotification
+import nexters.hyomk.dontforget.presentation.feature.detail.CustomSnackBar
 import nexters.hyomk.dontforget.presentation.utils.LunarCalendarUtil
 import nexters.hyomk.dontforget.presentation.utils.addFocusCleaner
 import nexters.hyomk.dontforget.presentation.utils.isKeyboardVisible
@@ -103,6 +111,8 @@ fun EditScreen(
 
     val lifecycle = LocalLifecycleOwner.current
 
+    val snackState = remember { SnackbarHostState() }
+
     LaunchedEffect(uiState) {
         Timber.w("uisate update $uiState")
         if (uiState is EditUiState.Success) {
@@ -114,12 +124,20 @@ fun EditScreen(
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         viewModel.getDetailAnniversary(eventId)
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.events.collectLatest {
                 when (it) {
                     is ModifyEvent.Fail -> {
+                        Timber.i("edit fail ${it.message}")
+                        if (it.message.isNotBlank()) {
+                            coroutineScope.launch {
+                                snackState.showSnackbar(it.message)
+                            }
+                        }
                     }
 
                     is ModifyEvent.Success -> {
@@ -151,140 +169,135 @@ fun EditScreen(
         showDialog = true
     }
 
-    Scaffold(
-        modifier = Modifier
-            .addFocusCleaner(focusManager)
-            .imePadding(),
-        containerColor = Gray900,
-        contentWindowInsets = WindowInsets(0, 0, 0, 20),
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            snackbarHost = { CustomSnackBar(snackState = snackState, modifier = Modifier.align(Alignment.BottomCenter)) },
+            modifier = Modifier
+                .addFocusCleaner(focusManager)
+                .imePadding(),
+            containerColor = Gray900,
+            contentWindowInsets = WindowInsets(0, 0, 0, 20),
 
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
-                title = { Text(text = guide.editTitle, style = MaterialTheme.typography.titleMedium, color = White) },
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Gray900),
+                    title = { Text(text = guide.editTitle, style = MaterialTheme.typography.titleMedium, color = White) },
 
-                navigationIcon = {
-                    TextButton(
-                        onClick = {
-                            showDialog = true
-                        },
-                    ) {
-                        Text(
-                            text = guide.cancel,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Gray600,
-                        )
-                    }
-                },
-
-            )
-        },
-        bottomBar = {
-            if (isKeyboardVisible() && uiState is EditUiState.Success) {
-                BaseButton(
-                    enabled = (uiState as EditUiState.Success).title.isNotBlank(),
-                    text = guide.next,
-                    onClick = {
-                        focusManager.clearFocus()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .padding(bottom = 16.dp),
-                    ) {
-                        BaseButton(
-                            enabled = (uiState is EditUiState.Success) && (uiState as EditUiState.Success).title.isNotBlank(),
-                            text = guide.complete,
-                            shape = RoundedCornerShape(12.dp),
+                    navigationIcon = {
+                        TextButton(
                             onClick = {
-                                viewModel.onClickSubmit(year = year.selectedItem, month = month.selectedItem, day = day.selectedItem)
+                                showDialog = true
                             },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                    Spacer(modifier = Modifier.navigationBarsPadding())
-                }
-            }
-        },
-    ) { it ->
-
-        when (uiState) {
-            is EditUiState.Loading -> {
-            }
-
-            is EditUiState.Fail -> {
-            }
-
-            is EditUiState.Success -> {
-                with(uiState as EditUiState.Success) {
-                    val base = remember {
-                        mutableStateOf(
-                            LocalDateTime.ofInstant(this@with.baseDate.toInstant(), this@with.baseDate.timeZone.toZoneId()),
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(it)
-                            .padding(20.dp)
-                            .consumeWindowInsets(it)
-                            .navigationBarsPadding()
-                            .imePadding(),
-
-                    ) {
-                        LazyColumn(
-                            state = scrollState,
-                            userScrollEnabled = scrollEnabled,
-                            modifier = Modifier.weight(9f),
                         ) {
-                            item {
-                                AnniversaryNameTextField(guide = guide, text = this@with.title, onValueChange = viewModel::updateName)
+                            Text(
+                                text = guide.cancel,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Gray600,
+                            )
+                        }
+                    },
 
-                                AnniversaryDatePicker(
-                                    day = day,
-                                    month = month,
-                                    year = year,
-                                    type = this@with.type,
-                                    setType = viewModel::updateDateType,
-                                    modifier = Modifier,
-                                    guide = guide,
-                                    setScrollEnabled = setScrollEnabled,
-                                    baseDate = target,
-                                )
+                )
+            },
+            bottomBar = {
+                if (isKeyboardVisible() && uiState is EditUiState.Success) {
+                    BaseButton(
+                        enabled = (uiState as EditUiState.Success).title.isNotBlank(),
+                        text = guide.next,
+                        onClick = {
+                            focusManager.clearFocus()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                } else {
+                    Column {
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .padding(bottom = 16.dp),
+                        ) {
+                            BaseButton(
+                                enabled = (uiState is EditUiState.Success) && (uiState as EditUiState.Success).title.isNotBlank(),
+                                text = guide.complete,
+                                shape = RoundedCornerShape(12.dp),
+                                onClick = {
+                                    viewModel.onClickSubmit(year = year.selectedItem, month = month.selectedItem, day = day.selectedItem)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                        Spacer(modifier = Modifier.navigationBarsPadding())
+                    }
+                }
+            },
+        ) { it ->
 
-                                AnniversaryNotification(
-                                    modifier = Modifier.addFocusCleaner(focusManager),
-                                    guide = guide,
-                                    focusManager = focusManager,
-                                    alarms = this@with.alarmSchedule,
-                                    onClickChip = {
-                                        val temp = ArrayList(this@with.alarmSchedule)
-                                        if (temp.contains(it)) {
-                                            temp.remove(it)
-                                        } else {
-                                            temp.add(it)
-                                        }
-                                        viewModel.updateAlarmSchedule(temp)
-                                    },
+            when (uiState) {
+                is EditUiState.Loading -> {
+                }
 
-                                )
-                                AnniversaryMemoTextField(
-                                    guide = guide,
-                                    text = this@with.content,
-                                    onValueChange = viewModel::updateMemo,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(bottom = 80.dp),
-                                )
+                is EditUiState.Fail -> {
+                }
+
+                is EditUiState.Success -> {
+                    with(uiState as EditUiState.Success) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(it)
+                                .padding(20.dp)
+                                .consumeWindowInsets(it)
+                                .navigationBarsPadding()
+                                .imePadding(),
+
+                        ) {
+                            LazyColumn(
+                                state = scrollState,
+                                userScrollEnabled = scrollEnabled,
+                                modifier = Modifier.weight(9f),
+                            ) {
+                                item {
+                                    AnniversaryNameTextField(guide = guide, text = this@with.title, onValueChange = viewModel::updateName)
+
+                                    AnniversaryDatePicker(
+                                        day = day,
+                                        month = month,
+                                        year = year,
+                                        type = this@with.type,
+                                        setType = viewModel::updateDateType,
+                                        modifier = Modifier,
+                                        guide = guide,
+                                        setScrollEnabled = setScrollEnabled,
+                                        baseDate = target,
+                                    )
+
+                                    AnniversaryNotification(
+                                        modifier = Modifier.addFocusCleaner(focusManager),
+                                        guide = guide,
+                                        focusManager = focusManager,
+                                        alarms = this@with.alarmSchedule,
+                                        onClickChip = {
+                                            val temp = ArrayList(this@with.alarmSchedule)
+                                            if (temp.contains(it)) {
+                                                temp.remove(it)
+                                            } else {
+                                                temp.add(it)
+                                            }
+                                            viewModel.updateAlarmSchedule(temp)
+                                        },
+
+                                    )
+                                    AnniversaryMemoTextField(
+                                        guide = guide,
+                                        text = this@with.content,
+                                        onValueChange = viewModel::updateMemo,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(bottom = 80.dp),
+                                    )
+                                }
                             }
-
-                            //
                         }
                     }
                 }
@@ -349,12 +362,7 @@ fun AnniversaryDatePicker(
         }
     }
 
-    LaunchedEffect(type.value) {
-        Timber.d("$type")
-        convertDate(type)
-    }
-
-    LaunchedEffect(baseDate.year, baseDate.month, baseDate.dayOfMonth) {
+    LaunchedEffect(baseDate.year, baseDate.monthValue, baseDate.dayOfMonth) {
         Timber.d("baseDate from $baseDate")
 
         year.selectedItem = baseDate.year
@@ -392,8 +400,10 @@ fun AnniversaryDatePicker(
                 onClick = { index ->
                     if (index == 0) {
                         setType(AnniversaryDateType.SOLAR)
+                        convertDate(AnniversaryDateType.SOLAR)
                     } else {
                         setType(AnniversaryDateType.LUNAR)
+                        convertDate(AnniversaryDateType.LUNAR)
                     }
                     setSelected(index)
                 },
@@ -435,7 +445,7 @@ fun AnniversaryNameTextField(
         value = text,
         onValueChange = onValueChange,
         hint = guide.createHint,
-        counterMaxLength = 15
+        counterMaxLength = 15,
 
     )
 }
