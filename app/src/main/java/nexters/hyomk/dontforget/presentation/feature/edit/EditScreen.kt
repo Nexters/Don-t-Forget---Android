@@ -435,6 +435,7 @@ fun AnniversaryNameTextField(
         value = text,
         onValueChange = onValueChange,
         hint = guide.createHint,
+        counterMaxLength = 15
 
     )
 }

@@ -73,7 +73,6 @@ import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Pink500
 import nexters.hyomk.dontforget.ui.theme.White
 import timber.log.Timber
-import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState", "UnrememberedMutableState")
@@ -273,8 +272,14 @@ fun AnniversaryMemoTextField(
             style = MaterialTheme.typography.titleSmall,
             color = White,
             modifier = Modifier.padding(top = 48.dp, bottom = 32.dp),
+
         )
-        BaseTextField(value = text, onValueChange = onValueChange, hint = guide.memoHint)
+        BaseTextField(
+            value = text,
+            onValueChange = onValueChange,
+            hint = guide.memoHint,
+            counterMaxLength = 30,
+        )
     }
 }
 
@@ -289,9 +294,7 @@ fun AnniversaryDatePicker(
     guide: TransGuide,
     setScrollEnabled: (Boolean) -> Unit,
 ) {
-    val (selected, setSelected) = remember { mutableStateOf(0) }
-
-    val today = LocalDateTime.now()
+    val (selected, setSelected) = remember { mutableIntStateOf(0) }
 
     var yInit by remember { mutableIntStateOf(1980) }
     var mInit by remember { mutableIntStateOf(1) }
@@ -333,11 +336,6 @@ fun AnniversaryDatePicker(
         }
     }
 
-    LaunchedEffect(type.value) {
-        Timber.d("$type")
-        convertDate(type)
-    }
-
     Row(modifier = Modifier.padding(top = 48.dp)) {
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
@@ -349,8 +347,10 @@ fun AnniversaryDatePicker(
             onClick = { index ->
                 if (index == 0) {
                     setType(AnniversaryDateType.SOLAR)
+                    convertDate(AnniversaryDateType.SOLAR)
                 } else {
                     setType(AnniversaryDateType.LUNAR)
+                    convertDate(AnniversaryDateType.LUNAR)
                 }
                 setSelected(index)
             },
@@ -406,6 +406,7 @@ fun AnniversaryNameTextField(
         value = text,
         onValueChange = onValueChange,
         hint = guide.createHint,
+        counterMaxLength = 15,
 
     )
 }

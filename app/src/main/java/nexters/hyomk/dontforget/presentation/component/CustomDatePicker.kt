@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nexters.hyomk.dontforget.ui.theme.Gray900
+import timber.log.Timber
 import java.time.YearMonth
 
 @Composable
@@ -44,10 +45,15 @@ fun CustomDatePicker(
             .fillMaxSize()
             .background(color = Gray900),
     ) {
-        var lastDay by remember { mutableIntStateOf(getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)) }
+        var lastDay by remember {
+            mutableIntStateOf(
+                getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem),
+            )
+        }
 
         LaunchedEffect(yearPickerState.selectedItem, monthPickerState.selectedItem) {
             val newLastDay = getLastDay(monthPickerState.selectedItem, yearPickerState.selectedItem)
+            Timber.d("lastDay $newLastDay , ${yearPickerState.selectedItem} - ${monthPickerState.selectedItem}")
             if (lastDay != newLastDay) {
                 lastDay = newLastDay
             }
@@ -99,20 +105,20 @@ fun CustomDatePicker(
 @Preview
 fun PreviewDatePicker() {
     val year by remember {
-        mutableStateOf(PickerState(2025))
+        mutableStateOf(PickerState(1980))
     }
     val month by remember {
         mutableStateOf(PickerState(1))
     }
     val day by remember {
-        mutableStateOf(PickerState(20))
+        mutableStateOf(PickerState(1))
     }
     CustomDatePicker(
         yearPickerState = year,
         monthPickerState = month,
         dayPickerState = day,
-        yInit = 2024,
+        yInit = 2025,
         mInit = 1,
-        dInit = 10,
+        dInit = 1,
     )
 }
