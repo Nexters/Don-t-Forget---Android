@@ -85,7 +85,7 @@ data class CreateUiState(
     val name: String = "",
     val memo: String = "",
     val alarms: List<AlarmSchedule> = listOf(AlarmSchedule.DDay),
-    val dateType: AnniversaryDateType = AnniversaryDateType.Solar,
+    val dateType: AnniversaryDateType = AnniversaryDateType.SOLAR,
 )
 
 sealed class CreateEvent {

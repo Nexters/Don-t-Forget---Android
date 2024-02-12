@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.domain.model.DetailAnniversary
+import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.presentation.component.BaseButton
 import nexters.hyomk.dontforget.presentation.component.BaseChip
@@ -126,6 +127,7 @@ fun EditScreen(
                 content = guide.createDialogContent,
                 left = guide.close,
                 right = guide.cancel,
+                icon = R.drawable.ic_anniversary_delete,
                 onClickLeft = { showDialog = false },
                 onClickRight = {
                     showDialog = false
@@ -302,7 +304,7 @@ fun AnniversaryDatePicker(
 
             Timber.d("[convert before ${type.name}] ${year.selectedItem}-${month.selectedItem}-${day.selectedItem} : ")
 
-            val newDate = if (type == AnniversaryDateType.Lunar) {
+            val newDate = if (type == AnniversaryDateType.LUNAR) {
                 LunarCalendarUtil.solar2Lunar(
                     "${year.selectedItem}$_month$_day",
                 )
@@ -361,9 +363,9 @@ fun AnniversaryDatePicker(
                 selectedItemIndex = selected,
                 onClick = { index ->
                     if (index == 0) {
-                        setType(AnniversaryDateType.Solar)
+                        setType(AnniversaryDateType.SOLAR)
                     } else {
-                        setType(AnniversaryDateType.Lunar)
+                        setType(AnniversaryDateType.LUNAR)
                     }
                     setSelected(index)
                 },

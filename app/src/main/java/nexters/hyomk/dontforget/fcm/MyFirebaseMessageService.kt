@@ -1,5 +1,6 @@
 package nexters.hyomk.dontforget.fcm
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -44,6 +45,7 @@ class MyFirebaseMessageService : FirebaseMessagingService() {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun sendNotification(title: String, body: String) {
         val notifyId = (System.currentTimeMillis() / 7).toInt()
         Timber.d("get noti$title / $body")
@@ -57,13 +59,14 @@ class MyFirebaseMessageService : FirebaseMessagingService() {
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_app)
+            .setSmallIcon(R.drawable.ic_push)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
             .setAutoCancel(true)
             .setSound(soundUri)
             .setContentIntent(pendingIntent)
+            .setColor(0x3478F6)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

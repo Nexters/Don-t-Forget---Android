@@ -102,6 +102,7 @@ fun DetailScreen(
             BaseAlertDialog(
                 title = guide.deleteDialogTitle,
                 content = guide.deleteDialogContent,
+                icon = R.drawable.ic_anniversary_delete,
                 left = guide.close,
                 right = guide.delete,
                 isWarning = true,
@@ -112,7 +113,6 @@ fun DetailScreen(
             )
         }
     }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.bg_full),
@@ -126,6 +126,7 @@ fun DetailScreen(
 
             is DetailUiState.Success -> {
                 val data = (uiState as DetailUiState.Success).data
+
                 Box(modifier = Modifier.background(color = Color.Transparent), contentAlignment = Alignment.TopCenter) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -141,7 +142,7 @@ fun DetailScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                                    .padding(horizontal = 20.dp, vertical = 18.dp),
 
                             ) {
                                 BaseIconButton(
@@ -170,7 +171,7 @@ fun DetailScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 36.dp),
+                                    .padding(horizontal = 32.dp),
                             ) {
                                 Text(
                                     text = "${data.solarDate.toFormatString()}",

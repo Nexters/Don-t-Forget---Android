@@ -1,5 +1,6 @@
 package nexters.hyomk.dontforget.presentation.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,13 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nexters.hyomk.dontforget.ui.theme.Gray500
+import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.ui.theme.Gray600
-import nexters.hyomk.dontforget.ui.theme.Gray700
 import nexters.hyomk.dontforget.ui.theme.Gray800
+import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import nexters.hyomk.dontforget.ui.theme.Red500
 import nexters.hyomk.dontforget.ui.theme.White
@@ -32,6 +34,7 @@ import nexters.hyomk.dontforget.ui.theme.White
 fun BaseAlertDialog(
     title: String,
     content: String,
+    icon: Int? = null,
     left: String,
     right: String,
     isWarning: Boolean = false,
@@ -41,7 +44,7 @@ fun BaseAlertDialog(
     Column(
         modifier = Modifier
             .background(
-                color = Gray700,
+                color = Gray900,
                 shape = RoundedCornerShape(12.dp),
             )
             .width(300.dp)
@@ -52,10 +55,11 @@ fun BaseAlertDialog(
             modifier = Modifier.padding(vertical = 32.dp, horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = icon ?: R.drawable.baseline_error_24),
+                contentDescription = null,
                 modifier = Modifier
-                    .size(56.dp)
-                    .background(color = Gray500),
+                    .size(56.dp),
             )
             Text(
                 modifier = Modifier.padding(vertical = 24.dp),
@@ -126,5 +130,6 @@ fun PreviewDialog() {
         right = "취소",
         onClickLeft = { /*TODO*/ },
         onClickRight = {},
+        icon = null,
     )
 }

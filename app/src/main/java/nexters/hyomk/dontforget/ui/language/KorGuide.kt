@@ -19,7 +19,8 @@ class KorGuide() : TransGuide() {
     override val month: String = "월"
     override val day: String = "일"
     override val notificationTitle: String = "미리 알림"
-    override val createDialogContent: String = "만들고 있던 기념일은\n" + "저장되지 않고, 사라집니다."
+    override val createDialogContent: String = "수정 중이던 내용은\n" +
+        "저장되지 않고, 사라집니다."
     override val createDialogTitle: String = "기념일 만들기를 취소할까요?"
     override val check: String = "확인"
     override val next: String = "다음"

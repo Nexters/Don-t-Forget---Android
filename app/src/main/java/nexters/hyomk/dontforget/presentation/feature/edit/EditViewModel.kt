@@ -44,7 +44,7 @@ class EditViewModel @Inject constructor(
                     solarDate = anniversary.solarDate,
                     lunarDate = anniversary.lunarDate,
                     content = anniversary.content,
-                    type = AnniversaryDateType.Solar,
+                    type = AnniversaryDateType.SOLAR,
                     alarmSchedule = anniversary.alarmSchedule,
                 ),
             )

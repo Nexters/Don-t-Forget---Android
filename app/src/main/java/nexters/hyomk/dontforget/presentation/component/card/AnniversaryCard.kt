@@ -3,7 +3,6 @@ package nexters.hyomk.dontforget.presentation.component.card
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +31,6 @@ import nexters.hyomk.domain.model.AnniversaryCardType
 import nexters.hyomk.domain.utils.toFormatString
 import nexters.hyomk.dontforget.presentation.utils.conditional
 import nexters.hyomk.dontforget.presentation.utils.createGradientBrush
-import nexters.hyomk.dontforget.ui.theme.Gray700
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import java.util.Calendar
 
@@ -60,11 +58,9 @@ fun AnniversaryCard(
             .graphicsLayer(
                 scaleX = scale.value,
                 scaleY = scale.value,
-            ).border(
-                color = Gray700,
-                width = 1.dp,
-                shape = RoundedCornerShape(16.dp),
             ),
+        color = Gray900,
+        contentColor = Gray900,
         shape = RoundedCornerShape(16.dp),
 
     ) {
@@ -83,7 +79,7 @@ fun AnniversaryCard(
                 ),
         )
         Column(
-            modifier.padding(end = 20.dp, start = 20.dp, bottom = 20.dp, top = 24.dp),
+            modifier.padding(end = 19.dp, start = 19.dp, bottom = 20.dp, top = 22.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
         ) {
@@ -93,14 +89,13 @@ fun AnniversaryCard(
             )
             Text(
                 text = if (dday == 365L) "D-DAY" else "D$dday",
-                modifier = Modifier.padding(top = 4.dp),
-                style = MaterialTheme.typography.titleMedium.copy(color = properties.dDayColor),
+                style = MaterialTheme.typography.headlineMedium.copy(color = properties.dDayColor, fontWeight = FontWeight.Bold),
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = date.toFormatString().substring(2),
                 modifier = Modifier.padding(top = 12.dp),
-                style = MaterialTheme.typography.titleSmall.copy(color = properties.dateColor, fontWeight = FontWeight.Normal),
+                style = MaterialTheme.typography.titleSmall.copy(color = properties.dateColor.copy(alpha = 0.5f), fontWeight = FontWeight.Medium),
             )
         }
     }

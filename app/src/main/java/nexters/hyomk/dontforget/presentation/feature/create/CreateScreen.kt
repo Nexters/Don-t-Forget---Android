@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.collectLatest
 import nexters.hyomk.domain.model.AlarmSchedule
 import nexters.hyomk.domain.model.AnniversaryDateType
+import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.presentation.component.BaseButton
 import nexters.hyomk.dontforget.presentation.component.BaseChip
@@ -86,9 +87,9 @@ fun CreateScreen(
 
     val today = LocalDateTime.now()
 
-    val year by remember { mutableStateOf(PickerState(today.year)) }
-    val month by remember { mutableStateOf(PickerState(today.monthValue)) }
-    val day by remember { mutableStateOf(PickerState(today.dayOfMonth)) }
+    val year by remember { mutableStateOf(PickerState(1980)) }
+    val month by remember { mutableStateOf(PickerState(1)) }
+    val day by remember { mutableStateOf(PickerState(1)) }
 
     val guide = GuideCompositionLocal.current
 
@@ -124,6 +125,7 @@ fun CreateScreen(
             BaseAlertDialog(
                 title = guide.createDialogTitle,
                 content = guide.createDialogContent,
+                icon = R.drawable.ic_anniversary_add,
                 left = guide.close,
                 right = guide.cancel,
                 onClickLeft = { showDialog = false },
@@ -250,7 +252,9 @@ fun CreateScreen(
                         guide = guide,
                         text = uiState.memo,
                         onValueChange = viewModel::updateMemo,
-                        modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 80.dp),
                     )
                 }
             }
@@ -302,7 +306,7 @@ fun AnniversaryDatePicker(
 
             Timber.d("[convert before ${type.name}] ${year.selectedItem}-${month.selectedItem}-${day.selectedItem} : ")
 
-            val newDate = if (type == AnniversaryDateType.Lunar) {
+            val newDate = if (type == AnniversaryDateType.LUNAR) {
                 LunarCalendarUtil.solar2Lunar(
                     "${year.selectedItem}$_month$_day",
                 )
@@ -346,9 +350,9 @@ fun AnniversaryDatePicker(
             selectedItemIndex = selected,
             onClick = { index ->
                 if (index == 0) {
-                    setType(AnniversaryDateType.Solar)
+                    setType(AnniversaryDateType.SOLAR)
                 } else {
-                    setType(AnniversaryDateType.Lunar)
+                    setType(AnniversaryDateType.LUNAR)
                 }
                 setSelected(index)
             },

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -62,10 +61,12 @@ import nexters.hyomk.dontforget.presentation.utils.conditional
 import nexters.hyomk.dontforget.presentation.utils.noRippleClickable
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.language.TransGuide
+import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Pink500
 import java.util.Calendar
 
+@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
@@ -100,7 +101,8 @@ fun HomeScreen(
                 Column(
                     Modifier
                         .fillMaxSize()
-                        .imePadding().padding(bottom = 16.dp),
+                        .padding(bottom = 16.dp)
+                        .consumeWindowInsets(it),
                 ) {
                     val anniversarys = (uiState as HomeUiState.Success).list
                     val main = (uiState as HomeUiState.Success).main
@@ -114,7 +116,7 @@ fun HomeScreen(
                                 Surface(
                                     shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
                                     modifier = Modifier
-                                        .background(Gray900).padding(bottom = 8.dp)
+                                        .background(Gray900).padding(bottom = 40.dp)
                                         .noRippleClickable {
                                             navHostController.navigate(NavigationItem.Detail.route + "/${anniversarys.first().eventId}")
                                         },
@@ -182,7 +184,6 @@ fun HomeScreen(
                                                         }
                                                     }
                                                 }
-                                                Spacer(modifier = Modifier.fillMaxHeight().weight(0.4f))
                                             }
                                         }
                                     }
@@ -222,10 +223,12 @@ fun HomeScreen(
                                     }
                                 }
                             }
+                            items(count = 1, span = { GridItemSpan(2) }) {
+                                Box(
+                                    Modifier.height(24.dp).fillMaxWidth(),
+                                )
+                            }
                         },
-                    )
-                    Spacer(
-                        Modifier.navigationBarsPadding(),
                     )
                 }
             }
@@ -305,7 +308,7 @@ fun LoadingContent() {
             )
         }
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = Gray400.copy(alpha = 0.6f), strokeWidth = 4.dp)
         }
     }
 }

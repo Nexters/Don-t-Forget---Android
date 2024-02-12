@@ -46,6 +46,8 @@ class DetailViewModel @Inject constructor(
                             lunarDate = it.lunarDate,
                             solarDate = it.solarDate,
                             alarmSchedule = it.alarmSchedule,
+                            baseDate = it.baseDate,
+                            baseType = it.baseType,
                         ),
                     ),
                 )
