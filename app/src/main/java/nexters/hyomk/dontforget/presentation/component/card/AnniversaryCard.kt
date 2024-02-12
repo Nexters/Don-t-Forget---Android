@@ -85,6 +85,7 @@ fun AnniversaryCard(
         ) {
             Text(
                 text = title,
+                maxLines = 1,
                 style = MaterialTheme.typography.headlineSmall.copy(color = properties.titleColor),
             )
             Text(

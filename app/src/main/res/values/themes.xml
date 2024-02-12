@@ -4,7 +4,7 @@
     <style name="Theme.Dont_forget" parent="android:Theme.Material.Light.NoActionBar"></style>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_inset</item>
         <item name="windowSplashScreenBackground">#3478F6</item>
     </style>
 </resources>
