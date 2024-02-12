@@ -12,6 +12,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import nexters.hyomk.dontforget.navigation.AppNavHost
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
@@ -22,6 +24,7 @@ import nexters.hyomk.dontforget.ui.theme.DontForgetTheme
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.utils.enumValueOrNull
+import timber.log.Timber
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -31,6 +34,27 @@ class MainActivity : ComponentActivity() {
 
     private val lan: String = Locale.getDefault().language
     private val guide = getSupportGuide(lan.enumValueOrNull<SupportLanguage>())
+    private fun getFcmToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.w("Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+
+                // Log and toast
+                Timber.d("[fcm] : $token")
+            },
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getFcmToken()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

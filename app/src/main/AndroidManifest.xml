@@ -30,23 +30,30 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/notification" />
 
+<!--        <activity-->
+<!--            android:name=".SplashActivity"-->
+<!--            android:exported="true"-->
+<!--            android:label="@string/app_name"-->
+<!--            android:theme="@style/Theme.App.Starting">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
-            android:name=".SplashActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.Dont_forget"
+            android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Dont_forget"
-            android:windowSoftInputMode="adjustResize"></activity>
 
         <service
             android:name="nexters.hyomk.dontforget.fcm.MyFirebaseMessageService"
