@@ -116,6 +116,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
     implementation("androidx.core:core-splashscreen:${Versions.splash}")
     implementation("com.airbnb.android:lottie-compose:${Versions.lottie}")
+    implementation("androidx.compose.material:material:${Versions.refresh}")
 }
 
 fun getProperty(propertyKey: String): String {

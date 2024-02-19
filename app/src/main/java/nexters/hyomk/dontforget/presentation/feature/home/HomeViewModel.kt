@@ -34,7 +34,6 @@ class HomeViewModel @Inject constructor(
                 } else {
                     getDetailAnniversaryUseCase(list.first().eventId).catch {
                         Timber.e("api result fail detail $it")
-
                         _uiState.emit(HomeUiState.Fail)
                     }.collectLatest {
                         _uiState.emit(HomeUiState.Success(list, it))

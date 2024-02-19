@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -27,6 +28,9 @@ class SplashViewModel @Inject constructor(
     private val _deviceId = MutableStateFlow("")
     val deviceId get() = _deviceId
 
+    private val _events = MutableSharedFlow<SplashEvent>()
+    val events get() = _events
+
     init {
         viewModelScope.launch {
             getDeviceInfoUseCase().collectLatest { deviceId ->
@@ -48,9 +52,16 @@ class SplashViewModel @Inject constructor(
                 FcmInfo(token = fcmToken, deviceId = deviceId.value, status = AlarmStatus.ON),
             ).catch {
                 Timber.e(it)
+                _events.emit(SplashEvent.Fail)
             }.collectLatest {
                 Timber.d(it.toString())
+                _events.emit(SplashEvent.Success)
             }
         }
+    }
+
+    sealed class SplashEvent {
+        object Success : SplashEvent()
+        object Fail : SplashEvent()
     }
 }
