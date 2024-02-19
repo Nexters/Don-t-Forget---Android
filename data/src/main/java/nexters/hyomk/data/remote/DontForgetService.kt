@@ -2,6 +2,7 @@ package nexters.hyomk.data.remote
 
 import nexters.hyomk.data.model.request.CreateAnniversaryDTO
 import nexters.hyomk.data.model.request.ModifyAnniversaryDTO
+import nexters.hyomk.data.model.request.UpdateFcmInfoDTO
 import nexters.hyomk.data.model.response.AnniversaryItemDTO
 import nexters.hyomk.data.model.response.DetailAnniversaryDTO
 import retrofit2.Response
@@ -29,6 +30,6 @@ interface DontForgetService {
     @DELETE("/api/anniversary/{eventId}")
     suspend fun deleteAnniversary(@Path("eventId") eventId: Long): Response<*>
 
-    @PUT("/api/device")
-    suspend fun modifyAlarmState(): Response<Unit>
+    @POST("/api/v1/notice/device")
+    suspend fun postFcmInfo(@Body request: UpdateFcmInfoDTO): Response<Unit>
 }

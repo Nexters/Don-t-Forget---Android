@@ -95,6 +95,25 @@ fun SplashScreen(
         )
     }
 
+    OnLifecycleEvent { owner, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                if (permissionRequestState.requestPermission) {
+                    if (deviceId.isNotBlank()) {
+                        navHostController.navigate(
+                            NavigationItem.Home.route,
+                        ) {
+                            launchSingleTop = true
+                            popUpTo(NavigationItem.Splash.route) { inclusive = true }
+                        }
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+
     RequestPermission(
         context = context,
         requestState = permissionRequestState,
@@ -187,15 +206,6 @@ fun SplashScreen(
             }
         }
     }
-}
-
-@Composable
-fun Loader() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_lottie))
-    LottieAnimation(
-        composition,
-        modifier = Modifier.fillMaxSize(),
-    )
 }
 
 fun Context.navigateToAppSettings() {
