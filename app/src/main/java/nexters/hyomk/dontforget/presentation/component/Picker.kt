@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -158,7 +159,7 @@ fun Picker(
                                 if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
                             }
                             .then(textModifier)
-                            .offset(x = -10.dp),
+                            .offset(x = -10.dp, y = -pixelsToDp(pixels = 4)),
 
                     )
                 }
@@ -173,7 +174,7 @@ fun Picker(
         Text(
             text = unit,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium.copy(color = Gray500),
+            style = MaterialTheme.typography.bodyMedium.copy(color = Gray500, fontSize = 15.sp),
             modifier = Modifier
                 .align(Alignment.Center)
                 .heightIn(textStyle.fontSize.value.dp, itemHeightDp)
@@ -261,7 +262,7 @@ fun PickerExample() {
                     visibleItemsCount = 3,
                     startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
                     textModifier = Modifier.padding(vertical = 17.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp),
                 )
             }
 

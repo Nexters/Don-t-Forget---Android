@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import timber.log.Timber
 import java.time.YearMonth
@@ -71,18 +73,18 @@ fun CustomDatePicker(
                 visibleItemsCount = 3,
                 startIndex = years.indexOf(yearPickerState.selectedItem),
                 textModifier = Modifier.padding(vertical = 17.dp),
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
                 initState = yInit,
             )
             Picker(
                 state = monthPickerState,
                 items = months,
                 unit = "월",
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.2f),
                 visibleItemsCount = 3,
                 startIndex = months.indexOf(monthPickerState.selectedItem),
                 textModifier = Modifier.padding(vertical = 17.dp),
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
                 initState = mInit,
             )
             Picker(
@@ -93,7 +95,7 @@ fun CustomDatePicker(
                 visibleItemsCount = 3,
                 startIndex = (1..lastDay).indexOf(dayPickerState.selectedItem),
                 textModifier = Modifier.padding(vertical = 17.dp),
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 24.sp),
                 isDayPicker = true,
                 initState = dInit,
             )

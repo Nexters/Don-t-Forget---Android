@@ -79,7 +79,6 @@ import nexters.hyomk.dontforget.ui.language.TransGuide
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Pink500
-import java.util.Calendar
 
 @OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -186,7 +185,7 @@ fun HomeScreen(
                                                     val dday = calculateDDay(main.solarDate.time)
 
                                                     Text(
-                                                        text = if (dday == 365L) "D-DAY" else "D$dday",
+                                                        text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
                                                         style = MaterialTheme.typography.headlineLarge,
                                                         color = type.dDayColor,
                                                     )
@@ -241,9 +240,6 @@ fun HomeScreen(
                                             },
                                         )
                                     } else {
-                                        val calendar = Calendar.getInstance()
-                                        calendar.set(2024, 3, 24)
-
                                         AnniversaryCard(
                                             properties = getCardProperties(anniversarys[index].cardType),
                                             title = anniversarys[index].title,
