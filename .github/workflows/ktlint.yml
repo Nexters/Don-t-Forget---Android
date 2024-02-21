@@ -28,6 +28,34 @@ jobs:
               shell: bash
               env:
                  API_KEY: ${{ secrets.BASE_URL }}
+           
+            - name: STORE_FILE
+              run: |
+                echo STORE_FILE=$STORE_FILE > local.properties
+              shell: bash
+              env:
+                 API_KEY: ${{ secrets.BASE_URL }}
+            
+            - name: KEY_PASSWORD
+              run: |
+                echo KEY_PASSWORD=$KEY_PASSWORD > local.properties
+              shell: bash
+              env:
+                 API_KEY: ${{ secrets.BASE_URL }}
+            
+            - name: KEY_ALIAS
+              run: |
+                echo KEY_ALIAS=$KEY_ALIAS > local.properties
+              shell: bash
+              env:
+                 API_KEY: ${{ secrets.BASE_URL }}  
+
+            - name: STORE_PASSWORD
+              run: |
+                echo STORE_PASSWORD=$STORE_PASSWORD > local.properties
+              shell: bash
+              env:
+                 API_KEY: ${{ secrets.BASE_URL }}       
 
 
             - name: Ktlint Check
