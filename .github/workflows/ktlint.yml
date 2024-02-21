@@ -59,7 +59,7 @@ jobs:
             
             
             - name: Create properties file
-              run: cat /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/local.properties | base64     
+              run: cat /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/local.properties     
 
             - name: Putting properties data
               env:
