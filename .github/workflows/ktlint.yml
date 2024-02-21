@@ -55,8 +55,16 @@ jobs:
                 echo STORE_PASSWORD=$STORE_PASSWORD > local.properties
               shell: bash
               env:
-                 API_KEY: ${{ secrets.BASE_URL }}       
+                 API_KEY: ${{ secrets.BASE_URL }}
+            
+            
+            - name: Create properties file
+              run: cat /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/local.properties | base64     
 
+            - name: Putting data
+              env:
+                DATA: ${{ secrets.LOCAL_PROPERTIES }}
+              run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/local.properties
 
             - name: Ktlint Check
               run: ./gradlew --no-daemon ktlintCheck --continue
