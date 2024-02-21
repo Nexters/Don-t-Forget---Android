@@ -18,8 +18,8 @@ android {
         applicationId = "nexters.hyomk.dontforget"
         minSdk = Apps.minSdk
         targetSdk = Apps.targetSdk
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
