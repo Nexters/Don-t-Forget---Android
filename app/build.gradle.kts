@@ -119,5 +119,5 @@ dependencies {
 }
 
 fun getProperty(propertyKey: String): String {
-    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+    return gradleLocalProperties(rootDir).getProperty(propertyKey) ?: ""
 }
