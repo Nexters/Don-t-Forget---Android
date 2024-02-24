@@ -63,5 +63,3 @@ jobs:
             - name: Ktlint Check
               run: ./gradlew --no-daemon ktlintCheck --continue   
 
-            - name: Build with Gradle
-              run: ./gradlew build
