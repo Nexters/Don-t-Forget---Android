@@ -10,18 +10,22 @@ import retrofit2.Response
 
 object SafeApiCall {
     suspend fun <T> call(response: Response<T>): Flow<T> {
-        return flow {
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    emit(it)
+        try {
+            return flow {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        emit(it)
+                    }
+                } else {
+                    val code = response.code()
+                    val errorMessage = response.errorBody()?.string()
+                    val error = Gson().fromJson<BaseError>(errorMessage, BaseError::class.java)
+                    throw HttpException(code, error)
                 }
-            } else {
-                val code = response.code()
-                val errorMessage = response.errorBody()?.string()
-                val error = Gson().fromJson<BaseError>(errorMessage, BaseError::class.java)
-                throw HttpException(code, error)
-            }
-        }.flowOn(Dispatchers.IO)
+            }.flowOn(Dispatchers.IO)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }
 

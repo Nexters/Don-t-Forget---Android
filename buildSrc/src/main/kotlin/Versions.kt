@@ -37,4 +37,5 @@ object Versions {
     const val fcm_direct = "20.2.0"
     const val splash = "1.0.0-beta02"
     const val lottie = "6.3.0"
+    const val refresh = "1.3.1"
 }

@@ -17,13 +17,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -34,19 +40,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import nexters.hyomk.domain.utils.calculateDDay
 import nexters.hyomk.domain.utils.toFormatString
 import nexters.hyomk.dontforget.R
@@ -57,6 +71,7 @@ import nexters.hyomk.dontforget.presentation.component.card.AnniversaryCard
 import nexters.hyomk.dontforget.presentation.component.card.getCardProperties
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.presentation.feature.detail.CustomSnackBar
+import nexters.hyomk.dontforget.presentation.feature.splash.OnLifecycleEvent
 import nexters.hyomk.dontforget.presentation.utils.conditional
 import nexters.hyomk.dontforget.presentation.utils.noRippleClickable
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
@@ -83,6 +98,7 @@ fun HomeScreen(
     )
 
     val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
 
     val displayMetrics = context.resources.displayMetrics
     val maxHeightPx = displayMetrics.heightPixels
@@ -90,6 +106,18 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         homeViewModel.getAnniversaryList()
+    }
+
+    OnLifecycleEvent { owner, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                coroutine.launch {
+                    homeViewModel.getAnniversaryList()
+                }
+            }
+
+            else -> {}
+        }
     }
 
     when (uiState) {
@@ -116,7 +144,8 @@ fun HomeScreen(
                                 Surface(
                                     shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
                                     modifier = Modifier
-                                        .background(Gray900).padding(bottom = 40.dp)
+                                        .background(Gray900)
+                                        .padding(bottom = 40.dp)
                                         .noRippleClickable {
                                             navHostController.navigate(NavigationItem.Detail.route + "/${anniversarys.first().eventId}")
                                         },
@@ -145,7 +174,9 @@ fun HomeScreen(
                                                     .padding(horizontal = 36.dp),
                                             ) {
                                                 Column(
-                                                    modifier = Modifier.fillMaxHeight().padding(top = 100.dp),
+                                                    modifier = Modifier
+                                                        .fillMaxHeight()
+                                                        .padding(top = 100.dp),
                                                 ) {
                                                     Text(
                                                         text = main.solarDate.toFormatString(),
@@ -197,7 +228,8 @@ fun HomeScreen(
                                             index % 2 == 1,
                                         ) {
                                             padding(end = 16.dp, start = 8.dp)
-                                        }.conditional(index % 2 == 0) {
+                                        }
+                                        .conditional(index % 2 == 0) {
                                             padding(start = 16.dp, end = 8.dp)
                                         },
                                 ) {
@@ -225,7 +257,9 @@ fun HomeScreen(
                             }
                             items(count = 1, span = { GridItemSpan(2) }) {
                                 Box(
-                                    Modifier.height(24.dp).fillMaxWidth(),
+                                    Modifier
+                                        .height(24.dp)
+                                        .fillMaxWidth(),
                                 )
                             }
                         },
@@ -247,16 +281,35 @@ fun HomeScreen(
         }
 
         is HomeUiState.Fail -> {
-            FailContent()
+            FailContent(refresh = homeViewModel::getAnniversaryList)
         }
+
+        else -> {}
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun FailContent() {
+fun FailContent(refresh: suspend () -> Unit) {
     val snackState = remember { SnackbarHostState() }
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+
+    val scrollState = rememberScrollState()
+
+    val state = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            refreshing = true
+            refreshScope.launch {
+                refresh()
+                delay(2000)
+                refreshing = false
+            }
+        },
+    )
+
     LaunchedEffect(Unit) {
         snackState.showSnackbar("네트워크 연결이 불안정합니다")
     }
@@ -281,6 +334,35 @@ fun FailContent() {
         }
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             CustomSnackBar(snackState = snackState, modifier = Modifier.align(Alignment.BottomCenter))
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(state) // state 적용
+                .verticalScroll(scrollState),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+                    .height(
+                        if (refreshing) { // 새로고침 중이면 높이 고정
+                            140.dp
+                        } else { // 당기기 정도에 따라 0~140dp까지 크기가 늘어남
+                            lerp(0.dp, 140.dp, state.progress.coerceIn(0f..1f))
+                        },
+                    ),
+            ) {
+                if (refreshing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .align(Alignment.Center),
+                        color = Color.White,
+                        strokeWidth = 1.dp,
+                    )
+                }
+            }
         }
     }
 }

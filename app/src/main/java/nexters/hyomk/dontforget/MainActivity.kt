@@ -30,7 +30,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viwModel by viewModels<SplashViewModel>()
+    private val viewModel by viewModels<SplashViewModel>()
 
     private val lan: String = Locale.getDefault().language
     private val guide = getSupportGuide(lan.enumValueOrNull<SupportLanguage>())
@@ -46,9 +46,18 @@ class MainActivity : ComponentActivity() {
                 val token = task.result
 
                 // Log and toast
-                Timber.d("[fcm] : $token")
+                Timber.d("[device] : ${viewModel.deviceId.value} /[fcm] : $token")
+                if (viewModel.deviceId.value.isNotBlank() && token.isNotBlank()) {
+                    viewModel.updateFcmInfo(token)
+                }
             },
         )
+    }
+
+    fun updateToken(token: String) {
+        if (viewModel.deviceId.value.isNotBlank() && token.isNotBlank()) {
+            viewModel.updateFcmInfo(token)
+        }
     }
 
     override fun onResume() {
