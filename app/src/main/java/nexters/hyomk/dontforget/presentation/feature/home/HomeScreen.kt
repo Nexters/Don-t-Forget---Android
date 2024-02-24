@@ -419,7 +419,7 @@ fun EmptyContent(
             contentAlignment = Alignment.BottomCenter,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.bg_full),
+                painter = painterResource(id = R.drawable.bg_splash),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(),
