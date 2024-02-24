@@ -2,7 +2,6 @@ package nexters.hyomk.dontforget.presentation.feature.edit
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -42,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -379,20 +377,7 @@ fun AnniversaryDatePicker(
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
 
-    Column(
-        modifier = Modifier.pointerInput(Unit) {
-            detectVerticalDragGestures(
-                onVerticalDrag = { change, dragAmount -> },
-                onDragStart = {
-                    setScrollEnabled(false)
-                },
-                onDragEnd = {
-                    setScrollEnabled(true)
-                },
-                onDragCancel = {},
-            )
-        },
-    ) {
+    Column() {
         Box(modifier = modifier.padding(vertical = 32.dp)) {
             CustomDateTab(
                 items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
