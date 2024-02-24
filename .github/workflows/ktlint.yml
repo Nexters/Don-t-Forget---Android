@@ -46,7 +46,7 @@ jobs:
             
             - name: Create key.properties
               run: |
-                echo STORE_PATH=release.keystore
+                echo "KEY_PATH=${{ secrets.KEY_PATH }}" >> local.properties
                 echo "STORE_PASSWORD=${{ secrets.STORE_PASSOWRD }}" >> local.properties
                 echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
                 echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties        
