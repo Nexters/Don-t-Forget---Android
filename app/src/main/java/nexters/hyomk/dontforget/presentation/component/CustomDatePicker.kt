@@ -18,12 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nexters.hyomk.domain.model.AnniversaryDateType
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import timber.log.Timber
 import java.time.YearMonth
 
 @Composable
 fun CustomDatePicker(
+    dateType: AnniversaryDateType,
     yearPickerState: PickerState,
     monthPickerState: PickerState,
     dayPickerState: PickerState,
@@ -32,7 +34,12 @@ fun CustomDatePicker(
     dInit: Int,
 ) {
     fun getLastDay(month: Int, year: Int): Int {
-        return YearMonth.of(year, month).lengthOfMonth()
+        val lastDay = YearMonth.of(year, month).lengthOfMonth()
+        return if (dateType == AnniversaryDateType.LUNAR && lastDay > 30) {
+            30
+        } else {
+            YearMonth.of(year, month).lengthOfMonth()
+        }
     }
 
     val years = (1900..2050).toList()
@@ -114,6 +121,7 @@ fun PreviewDatePicker() {
         mutableStateOf(PickerState(1))
     }
     CustomDatePicker(
+        dateType = AnniversaryDateType.LUNAR,
         yearPickerState = year,
         monthPickerState = month,
         dayPickerState = day,

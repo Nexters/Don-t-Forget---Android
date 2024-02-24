@@ -412,6 +412,7 @@ fun AnniversaryDatePicker(
         }
 
         CustomDatePicker(
+            dateType = type,
             yearPickerState = year,
             monthPickerState = month,
             dayPickerState = day,

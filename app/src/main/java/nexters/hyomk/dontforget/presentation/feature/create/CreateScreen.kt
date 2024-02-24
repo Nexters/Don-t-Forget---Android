@@ -373,6 +373,7 @@ fun AnniversaryDatePicker(
         },
     ) {
         CustomDatePicker(
+            dateType = type,
             yearPickerState = year,
             monthPickerState = month,
             dayPickerState = day,
@@ -432,7 +433,7 @@ fun AnniversaryNotification(
                     },
                     isSelected = alarms.contains(it),
                     modifier = modifier.padding
-                    (end = 8.dp),
+                        (end = 8.dp),
                 )
             }
         }
