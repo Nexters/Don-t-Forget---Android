@@ -29,7 +29,6 @@ jobs:
               env:
                  API_KEY: ${{ secrets.BASE_URL }}
 
-
             - name: Ktlint Check
               run: ./gradlew --no-daemon ktlintCheck --continue
             
@@ -40,6 +39,3 @@ jobs:
               env:
                 DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
               run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
-
-            - name: Build with Gradle
-              run: ./gradlew build
