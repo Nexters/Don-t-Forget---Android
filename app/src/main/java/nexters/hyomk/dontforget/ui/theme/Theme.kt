@@ -1,30 +1,43 @@
 package nexters.hyomk.dontforget.ui.theme
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = White,
+    onPrimary = White,
+    secondary = Red500,
+    onSecondary = Red500,
+    tertiary = Primary500,
+    onTertiary = Primary500,
+    onBackground = Gray900,
+    background = Gray900,
+    surface = Gray900,
+    onSurface = Gray900,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = White,
+    onPrimary = White,
+    secondary = Red500,
+    onSecondary = Red500,
+    tertiary = Primary500,
+    onTertiary = Primary500,
+    onBackground = Gray900,
+    background = Gray900,
+    surface = Gray900,
+    onSurface = Gray900,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -38,35 +51,31 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun Dont_forgetTheme(
+fun DontForgetTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) {
-                dynamicDarkColorScheme(context)
-            } else {
-                dynamicLightColorScheme(
-                    context
-                )
-            }
+            dynamicLightColorScheme(
+                context,
+            )
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme -> LightColorScheme
         else -> LightColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = Color.TRANSPARENT
             WindowCompat.getInsetsController(
                 window,
-                view
+                view,
             ).isAppearanceLightStatusBars = darkTheme
         }
     }
@@ -74,6 +83,6 @@ fun Dont_forgetTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

@@ -12,7 +12,7 @@ dependencies {
     api(project(":domain"))
     implementation("javax.inject:javax.inject:${Versions.javax_inject}")
     implementation(
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}"
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}",
     )
     implementation("androidx.paging:paging-common-ktx:${Versions.paging_common}")
     implementation("com.google.code.gson:gson:${Versions.gson}")

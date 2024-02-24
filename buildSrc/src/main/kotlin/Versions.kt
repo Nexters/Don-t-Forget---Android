@@ -32,4 +32,9 @@ object Versions {
     const val datastore = "1.0.0"
     const val kakao = "2.17.0"
     const val coil = "2.5.0"
+    const val firebase_bom = "32.3.1"
+    const val permission = "0.31.1-alpha"
+    const val fcm_direct = "20.2.0"
+    const val splash = "1.0.0-beta02"
+    const val lottie = "6.3.0"
 }

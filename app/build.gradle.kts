@@ -1,9 +1,14 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
 }
+
+val localProperties = gradleLocalProperties(rootDir)
 
 android {
     namespace = "nexters.hyomk.dontforget"
@@ -20,15 +25,32 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"${getProperty("BASE_URL")}\"")
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = (file(getProperty("STORE_PATH")))
+            storePassword = (getProperty("KEY_PASSWORD"))
+            keyAlias = (getProperty("KEY_ALIAS"))
+            keyPassword = (getProperty("STORE_PASSWORD"))
+        }
     }
 
     buildTypes {
         release {
+            isDebuggable = false
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isDebuggable = true
         }
     }
     compileOptions {
@@ -86,4 +108,16 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-core:${Versions.datastore}")
     implementation("androidx.datastore:datastore-preferences:${Versions.datastore}")
     implementation("io.coil-kt:coil-compose:${Versions.coil}")
+
+    implementation(platform("com.google.firebase:firebase-bom:${Versions.firebase_bom}"))
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-messaging-directboot:${Versions.fcm_direct}")
+    implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
+    implementation("androidx.core:core-splashscreen:${Versions.splash}")
+    implementation("com.airbnb.android:lottie-compose:${Versions.lottie}")
+}
+
+fun getProperty(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey) ?: ""
 }

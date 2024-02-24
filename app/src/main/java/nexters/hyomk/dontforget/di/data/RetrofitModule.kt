@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import nexters.hyomk.dontforget.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,11 +13,11 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
-    private const val BASE_URL = "baseUrl"
+    private const val BASE_URL = BuildConfig.BASE_URL
 
     @Provides
     fun provideRetrofit(
-        loggingOkHttpClient: OkHttpClient
+        loggingOkHttpClient: OkHttpClient,
     ): Retrofit {
         val dontForgetRetrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
