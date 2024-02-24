@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nexters.hyomk.dontforget.presentation.utils.NoRippleTheme
-import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import nexters.hyomk.dontforget.ui.theme.Primary600
@@ -66,7 +65,7 @@ fun BaseButton(
             ) {
                 Text(
                     text = text,
-                    modifier = Modifier.padding(vertical = 20.dp),
+                    modifier = Modifier.padding(vertical = 16.dp),
                     color = White,
                     style = textStyle.copy(fontSize = 20.sp),
                 )
