@@ -1,6 +1,7 @@
 package nexters.hyomk.dontforget.presentation.component
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -68,6 +70,8 @@ fun BaseTextField(
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
     val baseModifier =
         Modifier.fillMaxWidth().heightIn(min = TextFieldMinHeight, max = TextFieldMaxHeight).padding(horizontal = 17.dp)
 
@@ -112,9 +116,9 @@ fun BaseTextField(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center,
                         ) {
-                            if (value.isEmpty()) {
+                            if (!isFocused && value.isEmpty()) {
                                 Text(
-                                    textAlign = TextAlign.Center,
+
                                     text = hint,
                                     color = Gray700,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -130,11 +134,12 @@ fun BaseTextField(
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     text = helperText,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     color = White,
                 )
             }
-            Divider(color = Gray800, modifier = Modifier.padding(top = 17.dp))
+            Divider(color = if (isFocused) Primary500 else Gray800, modifier = Modifier.padding(top = 17.dp))
         }
     }
 }
