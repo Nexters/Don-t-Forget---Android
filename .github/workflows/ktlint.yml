@@ -42,7 +42,7 @@ jobs:
                 fileName: key.jks
                 encodedString: ${{ secrets.STORE_FILE }}
 
-            - run : echo STORE_FILE=$STORE_FILE | base64 -d > release.keystore
+            - run : echo $STORE_FILE | base64 -d > release.keystore
             
             - name: Create key.properties
               run: |
