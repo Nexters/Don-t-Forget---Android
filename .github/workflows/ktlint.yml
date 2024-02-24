@@ -43,6 +43,8 @@ jobs:
                 encodedString: ${{ secrets.STORE_FILE }}
 
             - run : echo $STORE_FILE | base64 -d > release.keystore
+            - name: Ktlint Check
+              run: ./gradlew --no-daemon ktlintCheck --continue
             
             - name: Create key.properties
               run: |
@@ -60,6 +62,5 @@ jobs:
                 DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
               run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
 
-            - name: Ktlint Check
-              run: ./gradlew --no-daemon ktlintCheck --continue   
-
+            - name: Build with Gradle
+              run: ./gradlew build

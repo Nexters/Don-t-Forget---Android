@@ -44,6 +44,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -53,6 +54,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.R
 import nexters.hyomk.dontforget.navigation.NavigationItem
@@ -89,10 +91,34 @@ fun SplashScreen(
     )
     val lottieAnimatable = rememberLottieAnimatable()
 
+    val lifecycle = LocalLifecycleOwner.current
+
     LaunchedEffect(Unit) {
         lottieAnimatable.animate(
             composition,
         )
+
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            splashViewModel.events.collectLatest {
+                when (it) {
+                    SplashViewModel.SplashEvent.Success -> {
+                        if (permissionRequestState.requestPermission) {
+                            if (deviceId.isNotBlank()) {
+                                navHostController.navigate(
+                                    NavigationItem.Home.route,
+                                ) {
+                                    launchSingleTop = true
+                                    popUpTo(NavigationItem.Splash.route) { inclusive = true }
+                                }
+                            }
+                        }
+                    }
+                    SplashViewModel.SplashEvent.Fail->{
+
+                    }
+                }
+            }
+        }
     }
 
     RequestPermission(
@@ -187,15 +213,6 @@ fun SplashScreen(
             }
         }
     }
-}
-
-@Composable
-fun Loader() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash_lottie))
-    LottieAnimation(
-        composition,
-        modifier = Modifier.fillMaxSize(),
-    )
 }
 
 fun Context.navigateToAppSettings() {

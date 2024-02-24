@@ -13,17 +13,48 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import nexters.hyomk.domain.model.AlarmStatus
+import nexters.hyomk.domain.model.FcmInfo
+import nexters.hyomk.domain.usecase.GetDeviceInfoUseCase
+import nexters.hyomk.domain.usecase.UpdateAnniversaryAlarmStateUseCase
 import nexters.hyomk.dontforget.MainActivity
 import nexters.hyomk.dontforget.R
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MyFirebaseMessageService : FirebaseMessagingService() {
     // 새로운 토큰이 생성될 때 마다 해당 콜백이 호출된다.
+
+    @Inject
+    lateinit var updateTokenUseCase: UpdateAnniversaryAlarmStateUseCase
+
+    @Inject
+    lateinit var deviceInfoUseCase: GetDeviceInfoUseCase
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.d("onNewToken: $token")
         // TODO 새로운 토큰 수신 시 서버로 전송
-        // MainActivity.uploadToken(token)
+        CoroutineScope(Dispatchers.IO).launch {
+            deviceInfoUseCase.invoke().catch {
+                Timber.e("fcm token refresh fail : $it")
+            }.collectLatest {
+                if (!it.isNullOrBlank()) {
+                    updateTokenUseCase.invoke(FcmInfo(token = token, deviceId = it, AlarmStatus.ON)).catch {
+                        Timber.e("fcm token refresh fail : $it")
+                    }.collectLatest {
+                        Timber.d(it.toString())
+                    }
+                }
+            }
+        }
     }
 
     // Foreground에서 Push Service를 받기 위해 Notification 설정

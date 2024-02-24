@@ -1,8 +1,12 @@
 package nexters.hyomk.dontforget.di.data
 
+import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nexters.hyomk.data.util.DeviceInfoManager
 import nexters.hyomk.dontforget.BuildConfig
@@ -17,8 +21,14 @@ object HttpClientModule {
 
     @Provides
     @Singleton
-    fun provideLoggingHttpClient(deviceInfoManager: DeviceInfoManager): OkHttpClient {
+    fun provideLoggingHttpClient(deviceInfoManager: DeviceInfoManager, @ApplicationContext applicationContext: Context): OkHttpClient {
         val builder = OkHttpClient.Builder()
+
+        builder.addInterceptor(
+            NetworkConnectionInterceptor(
+                applicationContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager,
+            ),
+        )
 
         builder.addInterceptor(
             AuthInterceptor(deviceInfoManager),
