@@ -89,7 +89,7 @@ fun AnniversaryCard(
                 style = MaterialTheme.typography.headlineSmall.copy(color = properties.titleColor),
             )
             Text(
-                text = if (dday == 365L) "D-DAY" else "D$dday",
+                text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
                 style = MaterialTheme.typography.headlineMedium.copy(color = properties.dDayColor, fontWeight = FontWeight.Bold),
             )
             Spacer(modifier = Modifier.weight(1f))

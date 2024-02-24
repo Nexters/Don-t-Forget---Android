@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray500
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Gray900
@@ -112,7 +113,7 @@ fun CustomDateTab(
             tabWidth = with(density) {
                 it.size.width.toDp() / items.size - tabPadding
             }
-        }.clip(RoundedCornerShape(8.dp))
+        }.clip(RoundedCornerShape(12.dp))
             .background(Gray800)
             .height(intrinsicSize = IntrinsicSize.Min),
     ) {

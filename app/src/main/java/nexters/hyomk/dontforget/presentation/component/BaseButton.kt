@@ -4,9 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nexters.hyomk.dontforget.presentation.utils.NoRippleTheme
+import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import nexters.hyomk.dontforget.ui.theme.Primary600
@@ -54,18 +53,23 @@ fun BaseButton(
         LocalRippleTheme provides NoRippleTheme, // 버튼의 리플 이펙트 제거
     ) {
         Surface(
-            modifier = modifier.height(72.dp),
+            modifier = modifier,
             onClick = { if (enabled) onClick() },
             shape = shape,
             color = color,
             interactionSource = interactionSource,
         ) {
             Row(
-                modifier.wrapContentHeight().padding(horizontal = 20.dp),
+                modifier.padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = text, color = White, style = textStyle.copy(fontSize = 20.sp))
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    color = White,
+                    style = textStyle.copy(fontSize = 20.sp),
+                )
             }
         }
     }
@@ -75,5 +79,5 @@ fun BaseButton(
 @Preview
 fun PreviewBaseButton() {
     var enabled by remember { mutableStateOf(false) }
-    BaseButton("text", onClick = { enabled = !enabled }, enabled = true)
+    BaseButton("text", onClick = { enabled = !enabled }, enabled = true, modifier = Modifier)
 }

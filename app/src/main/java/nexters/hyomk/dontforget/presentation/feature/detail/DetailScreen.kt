@@ -180,7 +180,7 @@ fun DetailScreen(
                                 val dday = calculateDDay(data.solarDate.time)
 
                                 Text(
-                                    text = if (dday == 365L) "D-DAY" else "D$dday",
+                                    text = if (dday == 365L|| dday == 0L) "D-DAY" else "D$dday",
                                     style = MaterialTheme.typography.headlineLarge,
                                     color = type.dDayColor,
                                 )
