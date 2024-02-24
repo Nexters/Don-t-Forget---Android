@@ -31,7 +31,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = (file(getProperty("STORE_FILE")))
+            storeFile = (file(getProperty("STORE_PATH")))
             storePassword = (getProperty("KEY_PASSWORD"))
             keyAlias = (getProperty("KEY_ALIAS"))
             keyPassword = (getProperty("STORE_PASSWORD"))
