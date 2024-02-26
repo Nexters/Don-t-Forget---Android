@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -79,6 +80,7 @@ import nexters.hyomk.dontforget.ui.language.TransGuide
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Pink500
+import nexters.hyomk.dontforget.ui.theme.Primary500
 import java.util.Calendar
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -180,25 +182,31 @@ fun HomeScreen(
                                                 ) {
                                                     Text(
                                                         text = main.solarDate.toFormatString(),
-                                                        style = MaterialTheme.typography.titleSmall,
+                                                        style = MaterialTheme.typography.titleLarge,
                                                         color = type.dateColor,
                                                     )
                                                     val dday = calculateDDay(main.solarDate.time)
 
                                                     Text(
-                                                        text = if (dday == 365L|| dday == 0L) "D-DAY" else "D$dday",
+                                                        text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
                                                         style = MaterialTheme.typography.headlineLarge,
-                                                        color = type.dDayColor,
+                                                        color = Primary500,
                                                     )
                                                     Spacer(modifier = Modifier.height(20.dp))
-                                                    Row(Modifier.wrapContentHeight(), verticalAlignment = Alignment.CenterVertically) {
+                                                    Row(
+                                                        Modifier.heightIn(max = 60.dp),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                    ) {
                                                         Divider(
                                                             modifier = Modifier
-                                                                .heightIn(min = 51.dp)
+                                                                .fillMaxHeight()
                                                                 .width(2.5.dp),
                                                             color = type.dDayColor,
                                                         )
-                                                        Column(modifier = Modifier.padding(start = 16.dp)) {
+                                                        Column(
+                                                            verticalArrangement = Arrangement.Center,
+                                                            modifier = Modifier.padding(start = 16.dp).wrapContentHeight(),
+                                                        ) {
                                                             Text(
                                                                 text = main.title,
                                                                 style = MaterialTheme.typography.titleMedium,
@@ -207,11 +215,13 @@ fun HomeScreen(
                                                                     .padding(bottom = 8.dp),
                                                             )
 
-                                                            Text(
-                                                                text = main.content,
-                                                                style = MaterialTheme.typography.titleSmall,
-                                                                color = type.dateColor,
-                                                            )
+                                                            if (main.content.isNotEmpty()) {
+                                                                Text(
+                                                                    text = main.content,
+                                                                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight(500)),
+                                                                    color = type.dateColor,
+                                                                )
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -258,7 +268,7 @@ fun HomeScreen(
                             items(count = 1, span = { GridItemSpan(2) }) {
                                 Box(
                                     Modifier
-                                        .height(24.dp)
+                                        .height(120.dp)
                                         .fillMaxWidth(),
                                 )
                             }

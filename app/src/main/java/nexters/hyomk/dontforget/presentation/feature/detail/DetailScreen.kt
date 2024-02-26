@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,7 +37,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -56,6 +57,7 @@ import nexters.hyomk.dontforget.presentation.component.BaseIconButton
 import nexters.hyomk.dontforget.presentation.component.card.ATypeCard
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.ui.theme.Gray900
+import nexters.hyomk.dontforget.ui.theme.Primary500
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -173,26 +175,28 @@ fun DetailScreen(
                             ) {
                                 Text(
                                     text = "${data.solarDate.toFormatString()}",
-                                    style = MaterialTheme.typography.titleSmall,
+                                    style = MaterialTheme.typography.titleLarge,
                                     color = type.dateColor,
                                 )
 
                                 val dday = calculateDDay(data.solarDate.time)
 
                                 Text(
-                                    text = if (dday == 365L|| dday == 0L) "D-DAY" else "D$dday",
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    color = type.dDayColor,
+                                    text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
+                                    style = MaterialTheme.typography.headlineLarge.copy(lineHeight = 72.sp),
+                                    color = Primary500,
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
-                                Row(Modifier.wrapContentHeight(), verticalAlignment = Alignment.CenterVertically) {
+                                Row(Modifier.heightIn(max = 60.dp), verticalAlignment = Alignment.CenterVertically) {
                                     Divider(
-                                        modifier = Modifier
-                                            .heightIn(min = 51.dp)
+                                        modifier = Modifier.fillMaxHeight()
                                             .width(2.5.dp),
                                         color = type.dDayColor,
                                     )
-                                    Column(modifier = Modifier.padding(start = 16.dp)) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.padding(start = 16.dp),
+                                    ) {
                                         Text(
                                             text = data.title,
                                             style = MaterialTheme.typography.titleMedium,
@@ -201,7 +205,14 @@ fun DetailScreen(
                                                 .padding(bottom = 8.dp),
                                         )
 
-                                        Text(text = data.content, style = MaterialTheme.typography.titleSmall, color = type.dateColor)
+                                        if (data.content.isNotEmpty()) {
+                                            Text(
+                                                text = data.content,
+                                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight(500)),
+                                                color = type
+                                                    .dateColor,
+                                            )
+                                        }
                                     }
                                 }
                             }
