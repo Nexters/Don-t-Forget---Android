@@ -81,7 +81,7 @@ fun BaseTextField(
     )
 
     CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
-        Column {
+        Column(modifier = modifier) {
             BasicTextField(
                 modifier = modifier,
                 value = value,

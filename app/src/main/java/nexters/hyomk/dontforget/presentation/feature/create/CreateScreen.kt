@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -201,8 +202,8 @@ fun CreateScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .padding(vertical = 20.dp)
                 .padding(it)
-                .padding(20.dp)
                 .consumeWindowInsets(it)
                 .navigationBarsPadding()
                 .imePadding(),
@@ -224,7 +225,6 @@ fun CreateScreen(
                         setType = viewModel::updateDateType,
                         Modifier,
                         guide,
-                        setScrollEnabled,
                     )
 
                     AnniversaryNotification(
@@ -264,7 +264,7 @@ fun AnniversaryMemoTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+    Column(modifier.padding(horizontal = 20.dp)) {
         Text(
             text = guide.memoTitle,
             style = MaterialTheme.typography.titleSmall,
@@ -290,7 +290,6 @@ fun AnniversaryDatePicker(
     setType: (AnniversaryDateType) -> Unit,
     modifier: Modifier,
     guide: TransGuide,
-    setScrollEnabled: (Boolean) -> Unit,
 ) {
     val (selected, setSelected) = remember { mutableIntStateOf(0) }
 
@@ -334,11 +333,11 @@ fun AnniversaryDatePicker(
         }
     }
 
-    Row(modifier = Modifier.padding(top = 48.dp)) {
+    Row(modifier = Modifier.padding(top = 48.dp, start = 20.dp)) {
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
-    Box(modifier = modifier.padding(vertical = 32.dp)) {
+    Box(modifier = modifier.padding(vertical = 32.dp, horizontal = 20.dp)) {
         CustomDateTab(
             items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
             selectedItemIndex = selected,
@@ -357,18 +356,7 @@ fun AnniversaryDatePicker(
     }
 
     Column(
-//        modifier = Modifier.pointerInput(Unit) {
-//            detectVerticalDragGestures(
-//                onVerticalDrag = { change, dragAmount -> },
-//                onDragStart = {
-//                    setScrollEnabled(false)
-//                },
-//                onDragEnd = {
-//                    setScrollEnabled(true)
-//                },
-//                onDragCancel = {},
-//            )
-//        },
+        modifier = modifier.padding(horizontal = 20.dp),
     ) {
         CustomDatePicker(
             dateType = type,
@@ -396,12 +384,12 @@ fun AnniversaryNameTextField(
         focusRequester.requestFocus()
     }
 
-    Row(modifier = Modifier.padding(bottom = 32.dp)) {
+    Row(modifier = Modifier.padding(bottom = 32.dp, start = 20.dp, end = 20.dp)) {
         Text(text = guide.anniversaryTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
     BaseTextField(
-        modifier = Modifier.focusRequester(focusRequester),
+        modifier = Modifier.padding(horizontal = 20.dp).focusRequester(focusRequester),
         value = text,
         onValueChange = onValueChange,
         hint = guide.createHint,
@@ -418,10 +406,11 @@ fun AnniversaryNotification(
     alarms: List<AlarmSchedule>,
     onClickChip: (AlarmSchedule) -> Unit,
 ) {
-    Text(text = guide.notificationTitle, style = MaterialTheme.typography.titleSmall, color = White)
+    Text(text = guide.notificationTitle, modifier = modifier.padding(start = 20.dp), style = MaterialTheme.typography.titleSmall, color = White)
 
     LazyRow(modifier = modifier.padding(vertical = 30.dp)) {
         item {
+            Spacer(modifier = Modifier.width(20.dp))
             AlarmSchedule.values().map {
                 BaseChip(
                     text = guide.transNotificationPeriod(it),
@@ -434,6 +423,7 @@ fun AnniversaryNotification(
                         (end = 8.dp),
                 )
             }
+            Spacer(modifier = Modifier.width(20.dp))
         }
     }
 }

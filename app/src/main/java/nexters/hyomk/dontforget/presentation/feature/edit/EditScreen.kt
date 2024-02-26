@@ -244,7 +244,7 @@ fun EditScreen(
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .padding(it)
-                                .padding(20.dp)
+                                .padding(vertical = 20.dp)
                                 .consumeWindowInsets(it)
                                 .navigationBarsPadding()
                                 .imePadding(),
@@ -264,7 +264,7 @@ fun EditScreen(
                                         year = year,
                                         type = this@with.type,
                                         setType = viewModel::updateDateType,
-                                        modifier = Modifier,
+                                        modifier = Modifier.padding(horizontal = 20.dp),
                                         guide = guide,
                                         setScrollEnabled = setScrollEnabled,
                                         baseDate = target,
@@ -372,13 +372,15 @@ fun AnniversaryDatePicker(
         dInit = baseDate.dayOfMonth
     }
 
-    Row(modifier = Modifier.padding(top = 48.dp)) {
+    Row(modifier = modifier.padding(top = 48.dp)) {
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
 
-    Column() {
-        Box(modifier = modifier.padding(vertical = 32.dp)) {
+    Column(
+        modifier = modifier
+    ) {
+        Box(modifier = Modifier.padding(vertical = 32.dp)) {
             CustomDateTab(
                 items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
                 selectedItemIndex = selected,
