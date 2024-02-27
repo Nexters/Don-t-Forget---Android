@@ -35,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.theme.Gray500
 import nexters.hyomk.dontforget.ui.theme.Gray800
 import nexters.hyomk.dontforget.ui.theme.Gray900

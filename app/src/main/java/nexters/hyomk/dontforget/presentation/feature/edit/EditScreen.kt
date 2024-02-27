@@ -378,7 +378,7 @@ fun AnniversaryDatePicker(
     }
 
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(modifier = Modifier.padding(vertical = 32.dp)) {
             CustomDateTab(
