@@ -43,7 +43,7 @@ jobs:
                     fileName: key
                     encodedString: ${{ secrets.STORE_FILE }}
 
-            -   run: echo $STORE_FILE | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/key
+            -   run: echo $STORE_FILE | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/key
             
             -   name: Create key.properties
                 run: |
