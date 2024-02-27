@@ -60,6 +60,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.utils.calculateDDay
@@ -124,6 +128,15 @@ fun HomeScreen(
 
     when (uiState) {
         is HomeUiState.Success -> {
+            val composition by rememberLottieComposition(
+                LottieCompositionSpec.RawRes(R.raw.card),
+            )
+            val lottieAnimatable = rememberLottieAnimatable()
+
+            LaunchedEffect(Unit) {
+                lottieAnimatable.animate(composition)
+            }
+
             Scaffold(
                 modifier = Modifier.background(Gray900),
                 containerColor = Gray900,
@@ -159,13 +172,23 @@ fun HomeScreen(
                                             .background(Pink500),
                                     ) {
                                         Image(
-                                            painter = painterResource(id = R.drawable.bg_full),
+                                            painter = painterResource(id = R.drawable.bg_splash),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .fillMaxSize(),
                                             alignment = BiasAlignment(0f, 1f),
                                             contentScale = ContentScale.FillWidth,
                                         )
+
+                                        LottieAnimation(
+                                            composition,
+                                            modifier = Modifier
+                                                .fillMaxSize(),
+                                            contentScale = ContentScale.FillWidth,
+                                            alignment = BiasAlignment(0f, 1f),
+
+                                        )
+
                                         Box(
                                             modifier = Modifier,
                                         ) {
@@ -334,7 +357,7 @@ fun FailContent(refresh: suspend () -> Unit) {
             contentAlignment = Alignment.BottomCenter,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.bg_full),
+                painter = painterResource(id = R.drawable.bg_splash),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize(),
@@ -394,7 +417,7 @@ fun LoadingContent() {
 
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.bg_full),
+                    painter = painterResource(id = R.drawable.bg_splash),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize(),

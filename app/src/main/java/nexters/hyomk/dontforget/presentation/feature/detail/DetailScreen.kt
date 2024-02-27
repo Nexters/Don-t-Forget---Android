@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -46,6 +47,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import nexters.hyomk.domain.utils.calculateDDay
@@ -77,7 +82,13 @@ fun DetailScreen(
 
     val guide = GuideCompositionLocal.current
 
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.card),
+    )
+    val lottieAnimatable = rememberLottieAnimatable()
+
     LaunchedEffect(Unit) {
+        lottieAnimatable.animate(composition)
         viewModel.getDetailAnniversary(eventId)
     }
 
@@ -116,11 +127,21 @@ fun DetailScreen(
     }
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.bg_full),
+            painter = painterResource(id = R.drawable.bg_splash),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
+
+        LottieAnimation(
+            composition,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentScale = ContentScale.FillWidth,
+            alignment = BiasAlignment(0f, 1f),
+
+        )
+
         when (uiState) {
             is DetailUiState.Loading -> {
             }
