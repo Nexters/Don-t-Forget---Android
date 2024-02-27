@@ -44,15 +44,17 @@ jobs:
                     encodedString: ${{ secrets.STORE_FILE }}
 
             -   run: echo $STORE_FILE | base64 -d > release.keystore
-            -   name: Ktlint Check
-                run: ./gradlew --no-daemon ktlintCheck --continue
-
+            
             -   name: Create key.properties
                 run: |
                     echo "STORE_PATH=${{ secrets.STORE_PATH }}" >> local.properties
                     echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> local.properties
                     echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
                     echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties
+
+            -   name: Ktlint Check
+                run: ./gradlew --no-daemon ktlintCheck --continue
+
 
 
             -   name: Create Google service file
