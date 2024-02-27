@@ -40,10 +40,10 @@ jobs:
                 id: android_keystore
                 uses: timheuer/base64-to-file@v1.0.3
                 with:
-                    fileName: key.jks
+                    fileName: key
                     encodedString: ${{ secrets.STORE_FILE }}
 
-            -   run: echo $STORE_FILE | base64 -d > release.keystore
+            -   run: echo $STORE_FILE | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/key
             
             -   name: Create key.properties
                 run: |
