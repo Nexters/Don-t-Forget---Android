@@ -15,6 +15,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import nexters.hyomk.dontforget.navigation.AppNavHost
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
 import nexters.hyomk.dontforget.presentation.feature.splash.SplashViewModel
@@ -34,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private val lan: String = Locale.getDefault().language
     private val guide = getSupportGuide(lan.enumValueOrNull<SupportLanguage>())
-    private fun getFcmToken() {
+    private fun getFcmToken(deviceId: String) {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(
             OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -46,10 +50,8 @@ class MainActivity : ComponentActivity() {
                 val token = task.result
 
                 // Log and toast
-                Timber.d("[device] : ${viewModel.deviceId.value} /[fcm] : $token")
-                if (viewModel.deviceId.value.isNotBlank() && token.isNotBlank()) {
-                    viewModel.updateFcmInfo(token)
-                }
+                Timber.d("[device] : $deviceId /[fcm] : $token")
+                viewModel.updateFcmInfo(token)
             },
         )
     }
@@ -62,7 +64,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        getFcmToken()
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.deviceId.collectLatest { deviceId ->
+                if (deviceId.isNotBlank()) getFcmToken(deviceId)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
