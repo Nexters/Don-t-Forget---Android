@@ -56,12 +56,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    fun updateToken(token: String) {
-        if (viewModel.deviceId.value.isNotBlank() && token.isNotBlank()) {
-            viewModel.updateFcmInfo(token)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         CoroutineScope(Dispatchers.IO).launch {
