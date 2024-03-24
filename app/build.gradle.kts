@@ -18,7 +18,7 @@ android {
         applicationId = "nexters.hyomk.dontforget"
         minSdk = Apps.minSdk
         targetSdk = Apps.targetSdk
-        versionCode = 7
+        versionCode = 9
         versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
