@@ -2,7 +2,6 @@ package nexters.hyomk.dontforget.presentation.feature.edit
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -42,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -246,7 +244,7 @@ fun EditScreen(
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .padding(it)
-                                .padding(20.dp)
+                                .padding(vertical = 20.dp)
                                 .consumeWindowInsets(it)
                                 .navigationBarsPadding()
                                 .imePadding(),
@@ -266,7 +264,7 @@ fun EditScreen(
                                         year = year,
                                         type = this@with.type,
                                         setType = viewModel::updateDateType,
-                                        modifier = Modifier,
+                                        modifier = Modifier.padding(horizontal = 20.dp),
                                         guide = guide,
                                         setScrollEnabled = setScrollEnabled,
                                         baseDate = target,
@@ -374,26 +372,15 @@ fun AnniversaryDatePicker(
         dInit = baseDate.dayOfMonth
     }
 
-    Row(modifier = Modifier.padding(top = 48.dp)) {
+    Row(modifier = modifier.padding(top = 48.dp)) {
         Text(text = guide.dateTitle, style = MaterialTheme.typography.titleSmall, color = White)
         Text(text = " *", style = MaterialTheme.typography.titleSmall, color = Pink500)
     }
 
     Column(
-        modifier = Modifier.pointerInput(Unit) {
-            detectVerticalDragGestures(
-                onVerticalDrag = { change, dragAmount -> },
-                onDragStart = {
-                    setScrollEnabled(false)
-                },
-                onDragEnd = {
-                    setScrollEnabled(true)
-                },
-                onDragCancel = {},
-            )
-        },
+        modifier = modifier,
     ) {
-        Box(modifier = modifier.padding(vertical = 32.dp)) {
+        Box(modifier = Modifier.padding(vertical = 32.dp)) {
             CustomDateTab(
                 items = listOf(guide.solarTabTitle, guide.lunarTabTitle),
                 selectedItemIndex = selected,
@@ -412,6 +399,7 @@ fun AnniversaryDatePicker(
         }
 
         CustomDatePicker(
+            dateType = type,
             yearPickerState = year,
             monthPickerState = month,
             dayPickerState = day,
