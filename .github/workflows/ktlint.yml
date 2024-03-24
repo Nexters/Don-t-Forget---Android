@@ -16,6 +16,7 @@ jobs:
             STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
             KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
             BASE_URL: ${{secrets.BASE_URL}}
+            STORE_FILE : ${{ secrets.STORE_FILE }}
 
         steps:
             -   uses: actions/checkout@v3
