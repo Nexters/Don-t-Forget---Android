@@ -31,7 +31,7 @@ jobs:
                 run: chmod +x gradlew
 
             - name: Create Key Store
-              run: echo "${{ secrets.STORE_FILE }}" | base64 -d > release.keystore
+              run: echo "${{ secrets.STORE_FILE }}" | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/
       
             -   name: BASE_URL
                 run: |
