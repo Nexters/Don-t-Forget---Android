@@ -30,21 +30,15 @@ jobs:
             -   name: Grant execute permission for gradlew
                 run: chmod +x gradlew
 
+            - name: Create Key Store
+              run: echo "${{ secrets.STORE_FILE }}" | base64 -d > release.keystore
+      
             -   name: BASE_URL
                 run: |
                     echo BASE_URL=$BASE_URL > local.properties
                 shell: bash
                 env:
                     API_KEY: ${{ secrets.BASE_URL }}
-
-            -   name: Download Android keystore
-                id: android_keystore
-                uses: timheuer/base64-to-file@v1.0.3
-                with:
-                    fileName: key
-                    encodedString: ${{ secrets.STORE_FILE }}
-
-            -   run: echo $STORE_FILE | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/key
             
             -   name: Create key.properties
                 run: |
@@ -56,7 +50,7 @@ jobs:
             -   name: Ktlint Check
                 run: ./gradlew --no-daemon ktlintCheck --continue
 
-            -   name: Putting data
+            -   name: Add Google Services
                 env:
                     DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
                 run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
