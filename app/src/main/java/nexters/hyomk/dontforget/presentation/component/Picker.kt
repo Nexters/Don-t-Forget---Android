@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
@@ -132,8 +133,8 @@ fun Picker(
             flingBehavior = flingBehavior,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .height(itemHeightDp * visibleItemsCount)
-                .fillMaxWidth(),
+                .height(itemHeightDp * visibleItemsCount).offset(x = 20.dp)
+                .width(50.dp),
         ) {
             items(listScrollCount) { index ->
                 val isSelectedItem = state.selectedItem == getItem(index)
@@ -152,13 +153,11 @@ fun Picker(
                         style = textStyle.plus(
                             TextStyle(color = isSelectedColor),
                         ),
-                        textAlign = TextAlign.Center,
                         modifier = Modifier
                             .onSizeChanged { size ->
                                 if (size.height != itemHeightPixels.value) itemHeightPixels.value = size.height
                             }
-                            .then(textModifier)
-                            .offset(x = -10.dp),
+                            .then(textModifier),
 
                     )
                 }
@@ -205,7 +204,7 @@ fun PickerExample() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(horizontal = 30.dp),
         ) {
             val today = LocalDateTime.now()
             var lastDay by remember { mutableIntStateOf(getLastDay(today.monthValue, today.year)) }

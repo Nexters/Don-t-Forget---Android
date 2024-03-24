@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nexters.hyomk.domain.model.AnniversaryCardType
@@ -86,10 +87,11 @@ fun AnniversaryCard(
             Text(
                 text = title,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.headlineSmall.copy(color = properties.titleColor),
             )
             Text(
-                text = if (dday == 365L) "D-DAY" else "D$dday",
+                text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
                 style = MaterialTheme.typography.headlineMedium.copy(color = properties.dDayColor, fontWeight = FontWeight.Bold),
             )
             Spacer(modifier = Modifier.weight(1f))

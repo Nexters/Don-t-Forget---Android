@@ -112,7 +112,7 @@ fun CustomDateTab(
             tabWidth = with(density) {
                 it.size.width.toDp() / items.size - tabPadding
             }
-        }.clip(RoundedCornerShape(8.dp))
+        }.clip(RoundedCornerShape(12.dp))
             .background(Gray800)
             .height(intrinsicSize = IntrinsicSize.Min),
     ) {

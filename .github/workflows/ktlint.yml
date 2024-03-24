@@ -11,95 +11,49 @@ jobs:
         runs-on: ubuntu-latest
 
         env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          BASE_URL: ${{secrets.BASE_URL}}
+            KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+            STORE_PATH: ${{secrets.STORE_PATH}}
+            STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+            KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+            BASE_URL: ${{secrets.BASE_URL}}
+            STORE_FILE : ${{ secrets.STORE_FILE }}
 
         steps:
-            - uses: actions/checkout@v3
-            - name: set up JDK 17
-              uses: actions/setup-java@v3
-              with:
-                  java-version: '17'
-                  distribution: 'temurin'
-                  cache: gradle
+            -   uses: actions/checkout@v3
+            -   name: set up JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+                    cache: gradle
 
-            - name: Grant execute permission for gradlew
-              run: chmod +x gradlew
-            
-            - name: BASE_URL
-              run: |
-                echo BASE_URL=$BASE_URL > local.properties
-              shell: bash
-              env:
-                 API_KEY: ${{ secrets.BASE_URL }}
-            
-            - name: Download Android keystore
-              id: android_keystore
-              uses: timheuer/base64-to-file@v1.0.3
-              with:
-                fileName: key.jks
-                encodedString: ${{ secrets.STORE_FILE }}
+            -   name: Grant execute permission for gradlew
+                run: chmod +x gradlew
 
-            - run : echo $STORE_FILE | base64 -d > release.keystore
-            - name: Ktlint Check
-              run: ./gradlew --no-daemon ktlintCheck --continue
+            - name: Create Key Store
+              run: echo "${{ secrets.STORE_FILE }}" | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/key
+      
+            -   name: BASE_URL
+                run: |
+                    echo BASE_URL=$BASE_URL > local.properties
+                shell: bash
+                env:
+                    API_KEY: ${{ secrets.BASE_URL }}
             
-            - name: Create key.properties
-              run: |
-                echo "STORE_PATH=${{ secrets.STORE_PATH }}" >> local.properties
-                echo "STORE_PASSWORD=${{ secrets.STORE_PASSOWRD }}" >> local.properties
-                echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
-                echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties        
-           
-            
-            - name: Create Google service file
-              run: cat /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json | base64
-            
-            - name: Putting data
-              env:
-                DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-              run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
+            -   name: Create key.properties
+                run: |
+                    echo "STORE_PATH=${{ secrets.STORE_PATH }}" >> local.properties
+                    echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> local.properties
+                    echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
+                    echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties
 
-            - name: Build with Gradle
-              run: ./gradlew build
+            -   name: Ktlint Check
+                run: ./gradlew --no-daemon ktlintCheck --continue
 
-            - name: Grant execute permission for gradlew
-              run: chmod +x gradlew
-            
-            - name: BASE_URL
-              run: |
-                echo BASE_URL=$BASE_URL > local.properties
-              shell: bash
-              env:
-                 API_KEY: ${{ secrets.BASE_URL }}
-            
-            - name: Download Android keystore
-              id: android_keystore
-              uses: timheuer/base64-to-file@v1.0.3
-              with:
-                fileName: key.jks
-                encodedString: ${{ secrets.STORE_FILE }}
+            -   name: Add Google Services
+                env:
+                    DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+                run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
 
-            - run : echo $STORE_FILE | base64 -d > release.keystore
-            
-            - name: Create key.properties
-              run: |
-                echo "STORE_PATH=${{ secrets.STORE_PATH }}" >> local.properties
-                echo "STORE_PASSWORD=${{ secrets.STORE_PASSOWRD }}" >> local.properties
-                echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
-                echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties        
-           
-            
-            - name: Create Google service file
-              run: cat /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json | base64
-            
-            - name: Putting data
-              env:
-                DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-              run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
-
-            - name: Ktlint Check
-              run: ./gradlew --no-daemon ktlintCheck --continue   
-
+            -   name: Build with Gradle
+                run: ./gradlew build

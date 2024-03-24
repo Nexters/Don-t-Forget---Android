@@ -87,7 +87,7 @@ fun SplashScreen(
     )
 
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.splash_lottie),
+        LottieCompositionSpec.RawRes(R.raw.main_lottie_file),
     )
     val lottieAnimatable = rememberLottieAnimatable()
 
@@ -113,8 +113,8 @@ fun SplashScreen(
                             }
                         }
                     }
-                    SplashViewModel.SplashEvent.Fail->{
 
+                    SplashViewModel.SplashEvent.Fail -> {
                     }
                 }
             }
@@ -128,7 +128,7 @@ fun SplashScreen(
             showDialog = false
             coroutine.launch {
                 delay(
-                    4500,
+                    6500,
                 )
                 visible = permissionRequestState.requestPermission
                 if (deviceId.isNotBlank()) {
