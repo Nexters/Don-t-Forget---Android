@@ -62,6 +62,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
@@ -78,6 +79,7 @@ import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLo
 import nexters.hyomk.dontforget.presentation.feature.detail.CustomSnackBar
 import nexters.hyomk.dontforget.presentation.feature.splash.OnLifecycleEvent
 import nexters.hyomk.dontforget.presentation.utils.conditional
+import nexters.hyomk.dontforget.presentation.utils.dayFormat
 import nexters.hyomk.dontforget.presentation.utils.noRippleClickable
 import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.language.TransGuide
@@ -127,12 +129,15 @@ fun HomeScreen(
     when (uiState) {
         is HomeUiState.Success -> {
             val composition by rememberLottieComposition(
-                LottieCompositionSpec.RawRes(R.raw.card),
+                LottieCompositionSpec.RawRes(R.raw.card_delay),
             )
             val lottieAnimatable = rememberLottieAnimatable()
 
             LaunchedEffect(Unit) {
-                lottieAnimatable.animate(composition)
+                lottieAnimatable.animate(
+                    composition,
+                    iterations = LottieConstants.IterateForever,
+                )
             }
 
             val refreshScope = rememberCoroutineScope()
@@ -244,7 +249,7 @@ fun HomeScreen(
                                                     val dday = calculateDDay(main.solarDate.time)
 
                                                     Text(
-                                                        text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
+                                                        text = dday.dayFormat(),
                                                         style = MaterialTheme.typography.headlineLarge,
                                                         color = Primary500,
                                                     )
@@ -261,7 +266,9 @@ fun HomeScreen(
                                                         )
                                                         Column(
                                                             verticalArrangement = Arrangement.Center,
-                                                            modifier = Modifier.padding(start = 16.dp).wrapContentHeight(),
+                                                            modifier = Modifier
+                                                                .padding(start = 16.dp)
+                                                                .wrapContentHeight(),
                                                         ) {
                                                             Text(
                                                                 text = main.title,

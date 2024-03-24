@@ -32,6 +32,7 @@ import nexters.hyomk.domain.model.AnniversaryCardType
 import nexters.hyomk.domain.utils.toFormatString
 import nexters.hyomk.dontforget.presentation.utils.conditional
 import nexters.hyomk.dontforget.presentation.utils.createGradientBrush
+import nexters.hyomk.dontforget.presentation.utils.dayFormat
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import java.util.Calendar
 
@@ -91,7 +92,7 @@ fun AnniversaryCard(
                 style = MaterialTheme.typography.headlineSmall.copy(color = properties.titleColor),
             )
             Text(
-                text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
+                text = dday.dayFormat(),
                 style = MaterialTheme.typography.headlineMedium.copy(color = properties.dDayColor, fontWeight = FontWeight.Bold),
             )
             Spacer(modifier = Modifier.weight(1f))

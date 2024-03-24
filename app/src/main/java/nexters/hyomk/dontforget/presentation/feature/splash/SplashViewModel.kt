@@ -32,15 +32,21 @@ class SplashViewModel @Inject constructor(
     val events get() = _events
 
     init {
-        viewModelScope.launch {
-            getDeviceInfoUseCase().collectLatest { deviceId ->
-                if (deviceId.isNullOrBlank()) {
-                    DeviceIdProvider(application.applicationContext).getUniqueDeviceIdentifier().also {
-                        updateDeviceInfoUseCase(it ?: "")
-                        _deviceId.emit(it ?: "")
+        updateDeviceId()
+    }
+
+    fun updateDeviceId() {
+        if (_deviceId.value.isBlank()) {
+            viewModelScope.launch {
+                getDeviceInfoUseCase().collectLatest { deviceId ->
+                    if (deviceId.isNullOrBlank()) {
+                        DeviceIdProvider(application.applicationContext).getUniqueDeviceIdentifier().also {
+                            updateDeviceInfoUseCase(it ?: "")
+                            _deviceId.emit(it ?: "")
+                        }
+                    } else {
+                        _deviceId.emit(deviceId)
                     }
-                } else {
-                    _deviceId.emit(deviceId)
                 }
             }
         }

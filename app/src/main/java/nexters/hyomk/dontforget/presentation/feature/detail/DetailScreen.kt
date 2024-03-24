@@ -49,6 +49,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.flow.collectLatest
@@ -61,6 +62,7 @@ import nexters.hyomk.dontforget.presentation.component.BaseAlertDialog
 import nexters.hyomk.dontforget.presentation.component.BaseIconButton
 import nexters.hyomk.dontforget.presentation.component.card.ATypeCard
 import nexters.hyomk.dontforget.presentation.compositionlocal.GuideCompositionLocal
+import nexters.hyomk.dontforget.presentation.utils.dayFormat
 import nexters.hyomk.dontforget.ui.theme.Gray900
 import nexters.hyomk.dontforget.ui.theme.Primary500
 
@@ -83,12 +85,15 @@ fun DetailScreen(
     val guide = GuideCompositionLocal.current
 
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.card),
+        LottieCompositionSpec.RawRes(R.raw.card_delay),
     )
     val lottieAnimatable = rememberLottieAnimatable()
 
     LaunchedEffect(Unit) {
-        lottieAnimatable.animate(composition)
+        lottieAnimatable.animate(
+            composition,
+            iterations = LottieConstants.IterateForever,
+        )
         viewModel.getDetailAnniversary(eventId)
     }
 
@@ -203,7 +208,7 @@ fun DetailScreen(
                                 val dday = calculateDDay(data.solarDate.time)
 
                                 Text(
-                                    text = if (dday == 365L || dday == 0L) "D-DAY" else "D$dday",
+                                    text = dday.dayFormat(),
                                     style = MaterialTheme.typography.headlineLarge.copy(lineHeight = 72.sp),
                                     color = Primary500,
                                 )
