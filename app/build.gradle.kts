@@ -18,8 +18,8 @@ android {
         applicationId = "nexters.hyomk.dontforget"
         minSdk = Apps.minSdk
         targetSdk = Apps.targetSdk
-        versionCode = 6
-        versionName = "1.0.3"
+        versionCode = 7
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -115,8 +115,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-directboot:${Versions.fcm_direct}")
     implementation("com.google.accompanist:accompanist-permissions:${Versions.permission}")
     implementation("androidx.core:core-splashscreen:${Versions.splash}")
-    implementation("com.airbnb.android:lottie-compose:${Versions.lottie}")
     implementation("androidx.compose.material:material:${Versions.refresh}")
+    implementation("com.airbnb.android:lottie-compose:${Versions.lottie}")
 }
 
 fun getProperty(propertyKey: String): String {
