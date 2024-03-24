@@ -63,7 +63,7 @@ jobs:
             -   name: Putting data
                 env:
                     DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-                run: echo $DATA > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
+                run: echo $DATA | base64 -d > /home/runner/work/Don-t-Forget---Android/Don-t-Forget---Android/app/google-services.json
 
             -   name: Build with Gradle
                 run: ./gradlew build
