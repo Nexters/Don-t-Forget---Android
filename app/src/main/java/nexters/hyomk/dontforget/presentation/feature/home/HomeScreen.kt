@@ -83,11 +83,10 @@ import nexters.hyomk.dontforget.presentation.utils.pixelsToDp
 import nexters.hyomk.dontforget.ui.language.TransGuide
 import nexters.hyomk.dontforget.ui.theme.Gray400
 import nexters.hyomk.dontforget.ui.theme.Gray900
-import nexters.hyomk.dontforget.ui.theme.Pink500
 import nexters.hyomk.dontforget.ui.theme.Primary500
 import java.util.Calendar
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
@@ -107,7 +106,6 @@ fun HomeScreen(
     val coroutine = rememberCoroutineScope()
 
     val displayMetrics = context.resources.displayMetrics
-    val maxHeightPx = displayMetrics.heightPixels
     val maxWidthPx = displayMetrics.widthPixels
 
     LaunchedEffect(Unit) {
@@ -137,15 +135,34 @@ fun HomeScreen(
                 lottieAnimatable.animate(composition)
             }
 
+            val refreshScope = rememberCoroutineScope()
+            var refreshing by remember { mutableStateOf(false) }
+
+            val state = rememberPullRefreshState(
+                refreshing = refreshing,
+                onRefresh = {
+                    refreshing = true
+                    refreshScope.launch {
+                        homeViewModel.getAnniversaryList()
+                        delay(1000)
+                    }.invokeOnCompletion {
+                        refreshing = false
+                    }
+                },
+            )
+
             Scaffold(
                 modifier = Modifier.background(Gray900),
                 containerColor = Gray900,
+
             ) {
                 Column(
                     Modifier
                         .fillMaxSize()
                         .padding(bottom = 16.dp)
-                        .consumeWindowInsets(it),
+                        .consumeWindowInsets(it)
+                        .pullRefresh(state), // state 적용
+
                 ) {
                     val anniversarys = (uiState as HomeUiState.Success).list
                     val main = (uiState as HomeUiState.Success).main
@@ -167,9 +184,13 @@ fun HomeScreen(
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .height(560.dp)
-                                            .fillMaxWidth()
-                                            .background(Pink500),
+                                            .height(
+                                                if (refreshing) {
+                                                    600.dp
+                                                } else {
+                                                    lerp(560.dp, 600.dp, state.progress.coerceIn(0f..1f))
+                                                },
+                                            ).fillMaxWidth(),
                                     ) {
                                         Image(
                                             painter = painterResource(id = R.drawable.bg_splash),
@@ -188,6 +209,18 @@ fun HomeScreen(
                                             alignment = BiasAlignment(0f, 1f),
 
                                         )
+
+                                        if (refreshing) {
+                                            Box(modifier = Modifier.height(80.dp).fillMaxWidth()) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier
+                                                        .size(30.dp)
+                                                        .align(Alignment.BottomCenter),
+                                                    color = Color.White,
+                                                    strokeWidth = 1.dp,
+                                                )
+                                            }
+                                        }
 
                                         Box(
                                             modifier = Modifier,
